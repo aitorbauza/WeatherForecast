@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">WeatherForecast</string>
+    <string name="hourly_forecast">Pronóstico por horas</string>
+    <string name="daily_forecast">Próximos 7 días</string>
+    <string name="today">Hoy</string>
+    <string name="error_message">No se pudo cargar la información del clima</string>
+    <string name="retry">Reintentar</string>
+    <string name="loading">Cargando datos...</string>
+
+    <string name="change_location">Cambiar ubicación</string>
+    <string name="apply_location">Aplicar</string>
+    <string name="enter_location">Introduce ciudad o región</string>
+    <string name="location_empty">Por favor, introduce una ubicación</string>
+</resources>
