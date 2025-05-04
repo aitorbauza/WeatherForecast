@@ -2,12 +2,9 @@ package com.example.weatherforecast.ui;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,9 +24,14 @@ import com.example.weatherforecast.controller.WeatherController;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements WeatherController.WeatherView {
     private WeatherController controller;
@@ -46,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements WeatherController
     private LinearLayout dailyForecastContainer;
 
     private ImageButton btnChangeLocation;
+    private ImageButton btnSettings;
+    private ImageView toolbarLogo;
+    private BottomNavigationView bottomNavigation;
 
     private static final String DEFAULT_CITY = "Palma de Mallorca"; // Ciudad por defecto
 
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements WeatherController
         setContentView(R.layout.activity_main);
 
         initViews();
+        setupToolbar();
+        setupBottomNavigation();
         initController();
         loadWeatherData();
     }
@@ -74,12 +81,51 @@ public class MainActivity extends AppCompatActivity implements WeatherController
         btnChangeLocation = findViewById(R.id.btnChangeLocation);
         btnChangeLocation.setOnClickListener(v -> showLocationDialog());
 
+        // Nuevos elementos UI
+        btnSettings = findViewById(R.id.btnSettings);
+        toolbarLogo = findViewById(R.id.toolbarLogo);
+        bottomNavigation = findViewById(R.id.bottomNavigation);
+
         // Carga el fondo GIF
         Glide.with(this)
                 .asGif()
                 .load(R.drawable.cielo) // Asegúrate de tener este GIF en res/drawable
                 .centerCrop()
                 .into(backgroundGif);
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false); // Oculta el título predeterminado
+        }
+
+        // Configurar logo de la toolbar
+        Glide.with(this)
+                .load(R.drawable.logo) // Este recurso debe ser añadido
+                .into(toolbarLogo);
+
+        // Configurar botón de ajustes
+        btnSettings.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
+            // Aquí puedes lanzar la actividad de ajustes
+        });
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_weather) {
+                Toast.makeText(MainActivity.this, "Clima", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (itemId == R.id.nav_clothing) {
+                Toast.makeText(MainActivity.this, "Ropa", Toast.LENGTH_SHORT).show();
+                // Aquí podrías iniciar un Fragment o Activity para la recomendación de ropa
+                return true;
+            }
+            return false;
+        });
     }
 
     private void initController() {
@@ -94,13 +140,17 @@ public class MainActivity extends AppCompatActivity implements WeatherController
     @Override
     public void displayCurrentWeather(CurrentWeather weather) {
         runOnUiThread(() -> {
+            // Formato para "Hoy, HH:mm"
+            SimpleDateFormat dateFormat = new SimpleDateFormat("'Hoy', HH:mm", new Locale("es", "ES"));
+            String currentDateTime = dateFormat.format(new Date());
+
             locationText.setText(String.format("%s, %s", weather.getLocation(), weather.getCountry()));
             weatherEmoji.setText(weather.getWeatherIcon());
             temperatureText.setText(String.format("%.1f°C", weather.getTemperature()));
             weatherConditionText.setText(weather.getWeatherCondition());
             maxTempText.setText(String.format("Máx: %.1f°C", weather.getMaxTemperature()));
             minTempText.setText(String.format("Mín: %.1f°C", weather.getMinTemperature()));
-            weatherSummaryText.setText(weather.getSummary());
+            weatherSummaryText.setText(currentDateTime + " - " + weather.getSummary());
         });
     }
 
@@ -150,8 +200,6 @@ public class MainActivity extends AppCompatActivity implements WeatherController
         });
     }
 
-
-    // Añade este nuevo método para mostrar el diálogo
     private void showLocationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_location_search, null);
@@ -222,6 +270,4 @@ public class MainActivity extends AppCompatActivity implements WeatherController
             controller.onDestroy();
         }
     }
-
-
 }

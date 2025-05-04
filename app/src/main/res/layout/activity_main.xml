@@ -13,9 +13,44 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
+    <!-- Toolbar personalizada -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#3E6167"
+        android:elevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Logo/Imagen central -->
+            <ImageView
+                android:id="@+id/toolbarLogo"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"/>
+
+            <!-- Icono de ajustes -->
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_settings"
+                android:contentDescription="Ajustes" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@+id/bottomNavigation">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -132,7 +167,7 @@
                         android:textSize="14sp"
                         android:textStyle="italic"
                         android:textColor="#424242"
-                        tools:text="Se prevé sol con algunas nubes durante el día" />
+                        tools:text="Hoy, 00:00 - Se prevé sol con algunas nubes durante el día" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -199,4 +234,15 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- BottomNavigationView -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#3E6167"
+        app:itemIconTint="@android:color/white"
+        app:menu="@menu/bottom_nav_menu" />
+
 </RelativeLayout>

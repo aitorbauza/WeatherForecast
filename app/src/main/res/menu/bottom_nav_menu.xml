@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_weather"
+        android:icon="@drawable/ic_cloud"
+        android:title=" "/>
+
+    <item
+        android:id="@+id/nav_clothing"
+        android:icon="@drawable/ic_clothe_foreground"
+        android:title=" "/>
+
+    <!-- Espacio reservado para futuros iconos -->
+    <item
+        android:id="@+id/nav_placeholder1"
+        android:enabled="false"
+        android:visible="false"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_placeholder2"
+        android:enabled="false"
+        android:visible="false"
+        android:title="" />
+
+    <item
+        android:id="@+id/nav_placeholder3"
+        android:enabled="false"
+        android:visible="false"
+        android:title="" />
+</menu>
