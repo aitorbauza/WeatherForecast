@@ -157,6 +157,17 @@
                             android:textSize="14sp"
                             android:textColor="#212121"
                             tools:text="Mín: 18°C" />
+
+                        <TextView
+                            android:id="@+id/humidityText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textSize="14sp"
+                            android:textColor="#212121"
+                            android:drawableStart="@drawable/ic_humidity"
+                            android:drawablePadding="4dp"
+                            tools:text="45%" />
                     </LinearLayout>
 
                     <TextView

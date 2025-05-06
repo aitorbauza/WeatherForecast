@@ -33,9 +33,13 @@ public class WeatherResponse {
         @SerializedName("temp_min")
         private double minTemperature;
 
+        @SerializedName("humidity")
+        private int humidity;
+
         public double getTemperature() { return temperature; }
         public double getMaxTemperature() { return maxTemperature; }
         public double getMinTemperature() { return minTemperature; }
+        public int getHumidity() { return humidity; }
     }
 
     public static class Weather {

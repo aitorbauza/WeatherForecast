@@ -1,5 +1,6 @@
 package com.example.weatherforecast.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements WeatherController
     private TextView maxTempText;
     private TextView minTempText;
     private TextView weatherSummaryText;
+    private TextView humidityText;
     private LinearLayout hourlyForecastContainer;
     private LinearLayout dailyForecastContainer;
 
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements WeatherController
         maxTempText = findViewById(R.id.maxTempText);
         minTempText = findViewById(R.id.minTempText);
         weatherSummaryText = findViewById(R.id.weatherSummaryText);
+        humidityText = findViewById(R.id.humidityText);
         hourlyForecastContainer = findViewById(R.id.hourlyForecastContainer);
         dailyForecastContainer = findViewById(R.id.dailyForecastContainer);
 
@@ -122,7 +125,8 @@ public class MainActivity extends AppCompatActivity implements WeatherController
             } else if (itemId == R.id.nav_clothing) {
                 Toast.makeText(MainActivity.this, "Ropa", Toast.LENGTH_SHORT).show();
                 // Aquí podrías iniciar un Fragment o Activity para la recomendación de ropa
-                return true;
+                Intent intent = new Intent(MainActivity.this, OutfitActivity.class);
+                startActivity(intent);
             }
             return false;
         });
@@ -150,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements WeatherController
             weatherConditionText.setText(weather.getWeatherCondition());
             maxTempText.setText(String.format("Máx: %.1f°C", weather.getMaxTemperature()));
             minTempText.setText(String.format("Mín: %.1f°C", weather.getMinTemperature()));
+            humidityText.setText(String.format("%d%%", weather.getHumidity()));
             weatherSummaryText.setText(currentDateTime + " - " + weather.getSummary());
         });
     }

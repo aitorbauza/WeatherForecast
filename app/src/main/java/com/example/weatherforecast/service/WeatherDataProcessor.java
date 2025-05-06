@@ -29,7 +29,8 @@ public class WeatherDataProcessor {
                 data.getMain().getMinTemperature(),
                 weatherCondition,
                 iconMapper.getEmojiFromIconCode(iconCode),
-                summary
+                summary,
+                data.getMain().getHumidity()
         );
     }
 
