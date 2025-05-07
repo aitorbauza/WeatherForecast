@@ -254,6 +254,11 @@
         android:layout_alignParentBottom="true"
         android:background="#3E6167"
         app:itemIconTint="@android:color/white"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        app:elevation="16dp"
+        app:itemTextColor="@color/nav_item_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </RelativeLayout>

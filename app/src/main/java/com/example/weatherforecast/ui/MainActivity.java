@@ -55,15 +55,22 @@ public class MainActivity extends AppCompatActivity implements WeatherController
     private BottomNavigationView bottomNavigation;
 
     private static final String DEFAULT_CITY = "Palma de Mallorca"; // Ciudad por defecto
+    private String currentCity = DEFAULT_CITY; // Mantener registro de la ciudad actual
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Recuperar los datos de la ciudad enviados desde la actividad anterior
+        if (getIntent().hasExtra("CITY_NAME")) {
+            currentCity = getIntent().getStringExtra("CITY_NAME");
+        }
+
         initViews();
         setupToolbar();
         setupBottomNavigation();
+        bottomNavigation.setSelectedItemId(R.id.nav_weather);
         initController();
         loadWeatherData();
     }
@@ -124,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements WeatherController
                 return true;
             } else if (itemId == R.id.nav_clothing) {
                 Toast.makeText(MainActivity.this, "Ropa", Toast.LENGTH_SHORT).show();
-                // Aquí podrías iniciar un Fragment o Activity para la recomendación de ropa
                 Intent intent = new Intent(MainActivity.this, OutfitActivity.class);
+                intent.putExtra("CITY_NAME", currentCity);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
             return false;
@@ -138,12 +146,15 @@ public class MainActivity extends AppCompatActivity implements WeatherController
     }
 
     private void loadWeatherData() {
-        controller.loadWeatherData(DEFAULT_CITY);
+        controller.loadWeatherData(currentCity);
     }
 
     @Override
     public void displayCurrentWeather(CurrentWeather weather) {
         runOnUiThread(() -> {
+            // Actualizar la ciudad actual con la respuesta
+            currentCity = weather.getLocation();
+
             // Formato para "Hoy, HH:mm"
             SimpleDateFormat dateFormat = new SimpleDateFormat("'Hoy', HH:mm", new Locale("es", "ES"));
             String currentDateTime = dateFormat.format(new Date());
@@ -226,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements WeatherController
         btnApply.setOnClickListener(v -> {
             String newLocation = autoCompleteTextView.getText().toString().trim();
             if (!newLocation.isEmpty()) {
+                currentCity = newLocation;
                 controller.loadWeatherData(newLocation);
                 dialog.dismiss();
             } else {
