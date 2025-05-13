@@ -29,6 +29,7 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -167,7 +168,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_weather) {
-                Intent intent = new Intent(OutfitActivity.this, MainActivity.class);
+                Intent intent = new Intent(OutfitActivity.this, WeatherActivity.class);
                 intent.putExtra("CITY_NAME", cityName);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

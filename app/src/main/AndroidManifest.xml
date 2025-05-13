@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <!-- Add the following inside your <application> tag in AndroidManifest.xml -->
+
+    <!-- Google Maps API Key -->
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyBF5Bi-0WWKdREJqpJwdFMOl1bA5y7Xbv8" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -16,7 +26,7 @@
         android:theme="@style/Theme.WeatherForecast"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.weather.WeatherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,5 +38,21 @@
         <activity android:name=".ui.OutfitActivity"
             android:exported="true">
         </activity>
+
+        <activity
+            android:name=".ui.route.RouteWeatherActivity"
+            android:exported="false"
+            android:label="Route Weather" />
+
+        <!-- Required Google Maps libraries -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBF5Bi-0WWKdREJqpJwdFMOl1bA5y7Xbv8" />
+
     </application>
 </manifest>
