@@ -13,9 +13,29 @@ public class DailyForecast {
         this.weatherIcon = weatherIcon;
     }
 
+    public DailyForecast() {
+    }
+
     // Getters
     public String getDay() { return day; }
     public double getMaxTemperature() { return maxTemperature; }
     public double getMinTemperature() { return minTemperature; }
     public String getWeatherIcon() { return weatherIcon; }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public void setMaxTemperature(double maxTemperature) {
+        this.maxTemperature = maxTemperature;
+    }
+
+    public void setMinTemperature(double minTemperature) {
+        this.minTemperature = minTemperature;
+    }
+
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
+    }
+
 }

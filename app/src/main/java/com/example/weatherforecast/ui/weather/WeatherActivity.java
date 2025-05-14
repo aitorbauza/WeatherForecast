@@ -1,9 +1,13 @@
 package com.example.weatherforecast.ui.weather;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +19,7 @@ import com.example.weatherforecast.controller.WeatherController;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
+import com.example.weatherforecast.model.WeatherCache;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -26,6 +31,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     private WeatherDisplayComponent weatherDisplayComponent;
     private HourlyForecastComponent hourlyForecastComponent;
     private DailyForecastComponent dailyForecastComponent;
+    private WeatherCache weatherCache;
 
     // UI Components
     private ImageView backgroundGif;
@@ -35,20 +41,63 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     private BottomNavigationView bottomNavigation;
 
     private String currentCity = "Palma de Mallorca"; // Default city
+    private boolean forceReload = false;
+    private ProgressBar progressBar;
+    private static final int CACHE_MAX_AGE_MINUTES = 30; // Cache válido por 30 minutos
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Retrieve city data from intent if available
+        // Inicializar caché
+        weatherCache = new WeatherCache(this);
+
+        // Recuperar la ciudad desde el intent o usar la última ciudad en caché
         if (getIntent().hasExtra("CITY_NAME")) {
             currentCity = getIntent().getStringExtra("CITY_NAME");
+        } else {
+            String cachedCity = weatherCache.getLastCity();
+            if (cachedCity != null && !cachedCity.isEmpty()) {
+                currentCity = cachedCity;
+            }
         }
+
+        // Verificar si debemos forzar la recarga de datos
+        forceReload = NavigationManager.shouldForceReload(getIntent());
 
         initComponents();
         setupUI();
-        loadWeatherData();
+
+        // Verificar si hay datos en caché recientes
+        if (!forceReload && weatherCache.hasRecentData(CACHE_MAX_AGE_MINUTES)) {
+            // Cargar datos de la caché
+            loadFromCache();
+        } else {
+            // Cargar datos frescos
+            loadWeatherData();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Importante: actualiza el intent
+
+        // Actualizar la ciudad si ha cambiado
+        if (intent.hasExtra("CITY_NAME")) {
+            String newCity = intent.getStringExtra("CITY_NAME");
+            if (newCity != null && !currentCity.equals(newCity)) {
+                currentCity = newCity;
+                navigationManager.updateCurrentCity(newCity);
+                loadWeatherData();
+            }
+        }
+
+        // Verificar si debemos forzar la recarga
+        if (NavigationManager.shouldForceReload(intent)) {
+            loadWeatherData();
+        }
     }
 
     private void initComponents() {
@@ -56,7 +105,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
         findViews();
 
         // Initialize managers and components
-        navigationManager = new NavigationManager(this, bottomNavigation, currentCity);
+        navigationManager = new NavigationManager(
+                this,
+                bottomNavigation,
+                currentCity,
+                NavigationManager.ActivityType.WEATHER
+        );
         locationDialogManager = new LocationDialogManager(this, newLocation -> {
             currentCity = newLocation;
             loadWeatherData();
@@ -94,6 +148,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
         btnSettings = findViewById(R.id.btnSettings);
         toolbarLogo = findViewById(R.id.toolbarLogo);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+        progressBar = findViewById(R.id.progressBar);
     }
 
     private void setupUI() {
@@ -133,7 +188,36 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     }
 
     private void loadWeatherData() {
-        controller.loadWeatherData(currentCity);
+        // Mostrar indicador de carga si es necesario
+        showLoading(true);
+
+        // Cargar datos del clima con una pequeña demora para permitir que la UI se actualice
+        new Handler().postDelayed(() -> {
+            controller.loadWeatherData(currentCity);
+        }, 100);
+    }
+
+    private void loadFromCache() {
+        CurrentWeather currentWeather = weatherCache.getCurrentWeather();
+        List<HourlyForecast> hourlyForecasts = weatherCache.getHourlyForecast();
+        List<DailyForecast> dailyForecasts = weatherCache.getDailyForecast();
+
+        if (currentWeather != null) {
+            displayCurrentWeather(currentWeather);
+        }
+
+        if (hourlyForecasts != null && !hourlyForecasts.isEmpty()) {
+            displayHourlyForecast(hourlyForecasts);
+        }
+
+        if (dailyForecasts != null && !dailyForecasts.isEmpty()) {
+            displayDailyForecast(dailyForecasts);
+        }
+
+        // Si la caché está muy antigua, cargar datos frescos en segundo plano
+        if (!weatherCache.hasRecentData(CACHE_MAX_AGE_MINUTES / 2)) {
+            new Handler().postDelayed(this::loadWeatherData, 1000);
+        }
     }
 
     @Override
@@ -142,27 +226,67 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
             // Update current city with the response
             currentCity = weather.getLocation();
             weatherDisplayComponent.displayWeather(weather);
+            // Ocultar indicador de carga
+            showLoading(false);
+
+            // Guardar en caché
+            weatherCache.saveCurrentWeather(weather);
         });
     }
 
     @Override
     public void displayHourlyForecast(List<HourlyForecast> forecasts) {
-        runOnUiThread(() -> hourlyForecastComponent.displayForecasts(forecasts));
+        runOnUiThread(() -> {
+            hourlyForecastComponent.displayForecasts(forecasts);
+
+            // Guardar en caché
+            weatherCache.saveHourlyForecast(forecasts);
+        });
     }
 
     @Override
     public void displayDailyForecast(List<DailyForecast> forecasts) {
-        runOnUiThread(() -> dailyForecastComponent.displayForecasts(forecasts));
+        runOnUiThread(() -> {
+            dailyForecastComponent.displayForecasts(forecasts);
+
+            // Guardar en caché
+            weatherCache.saveDailyForecast(forecasts);
+        });
     }
 
     @Override
     public void showError(String message) {
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            // Ocultar indicador de carga en caso de error
+            showLoading(false);
+
+            // En caso de error, intentar cargar desde la caché si no se hizo antes
+            if (weatherCache.getCurrentWeather() != null &&
+                    weatherDisplayComponent != null) {
+                loadFromCache();
+                Toast.makeText(this, "Mostrando datos guardados anteriormente", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void showLoading(boolean isLoading) {
-        // Implement loading indicator if needed
+        runOnUiThread(() -> {
+            if (progressBar != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Recargar datos solo si se forzó la recarga al iniciar la actividad
+        if (forceReload) {
+            forceReload = false;
+            loadWeatherData();
+        }
     }
 
     @Override

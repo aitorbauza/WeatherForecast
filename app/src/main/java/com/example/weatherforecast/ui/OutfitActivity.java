@@ -1,7 +1,8 @@
 package com.example.weatherforecast.ui;
 
-import android.content.Intent;
+import android.content.Intent;  // Añadido
 import android.os.Bundle;
+import android.os.Handler;  // Añadido
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.ui.weather.NavigationManager;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -61,13 +63,16 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     private WeatherController weatherController;
     private OutfitViewModel outfitViewModel;
-    private String cityName;
+    private String currentCity;
+    private boolean forceReload = false;  // Añadido
 
     private ImageView backgroundGif;
     private ImageButton btnChangeLocation;
     private ImageButton btnSettings;
     private ImageView toolbarLogo;
     private BottomNavigationView bottomNavigation;
+
+    private NavigationManager navigationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,19 +81,38 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
         // Recuperar los datos de la ciudad enviados desde la actividad anterior
         if (getIntent().hasExtra("CITY_NAME")) {
-            cityName = getIntent().getStringExtra("CITY_NAME");
+            currentCity = getIntent().getStringExtra("CITY_NAME");
         } else {
-            cityName = "Palma de Mallorca"; // Ciudad por defecto si no se especifica (igual que en MainActivity)
+            currentCity = DEFAULT_CITY; // Ciudad por defecto si no se especifica
         }
+
+        // Verificar si debemos forzar la recarga
+        forceReload = NavigationManager.shouldForceReload(getIntent());
 
         initViews();
         initViewModel();
         setupListeners();
+        setupUI();
         loadWeatherData();
-        setupToolbar();
-        setupBottomNavigation();
-        bottomNavigation.setSelectedItemId(R.id.nav_clothing);
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // Actualizar ciudad si ha cambiado
+        if (intent.hasExtra("CITY_NAME")) {
+            String newCity = intent.getStringExtra("CITY_NAME");
+            if (!currentCity.equals(newCity)) {
+                currentCity = newCity;
+                loadWeatherData();
+            }
+        }
+
+        // Verificar si debemos forzar la recarga
+        if (NavigationManager.shouldForceReload(intent)) {
+            loadWeatherData();
+        }
     }
 
     private void initViews() {
@@ -118,6 +142,13 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnSettings = findViewById(R.id.btnSettings);
         toolbarLogo = findViewById(R.id.toolbarLogo);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        navigationManager = new NavigationManager(
+                this,
+                bottomNavigation,
+                currentCity,
+                NavigationManager.ActivityType.OUTFIT
+        );
 
         // Carga el fondo GIF
         Glide.with(this)
@@ -164,21 +195,10 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         });
     }
 
-    private void setupBottomNavigation() {
-        bottomNavigation.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_weather) {
-                Intent intent = new Intent(OutfitActivity.this, WeatherActivity.class);
-                intent.putExtra("CITY_NAME", cityName);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            } else if (itemId == R.id.nav_clothing) {
-                // Ya estamos en la actividad de ropa
-                return true;
-            }
-            return false;
-        });
+    private void setupUI() {
+        setupToolbar();
+        navigationManager.setupBottomNavigation();
+        bottomNavigation.setSelectedItemId(R.id.nav_clothing);
     }
 
     private void setupListeners() {
@@ -198,9 +218,16 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     }
 
     private void loadWeatherData() {
-        weatherController = new WeatherController(this);
-        weatherController.setView(this);
-        weatherController.loadWeatherData(cityName);
+        showLoading(true);
+
+        // Añadir pequeña demora para permitir que la UI se actualice
+        new Handler().postDelayed(() -> {
+            if (weatherController == null) {
+                weatherController = new WeatherController(this);
+                weatherController.setView(this);
+            }
+            weatherController.loadWeatherData(currentCity);
+        }, 100);
     }
 
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
@@ -212,7 +239,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     public void displayCurrentWeather(CurrentWeather weather) {
         runOnUiThread(() -> {
             // Actualizar la ciudad actual con la respuesta
-            cityName = weather.getLocation();
+            currentCity = weather.getLocation();
 
             // Formato para "Hoy, HH:mm"
             SimpleDateFormat dateFormat = new SimpleDateFormat("'Hoy', HH:mm", new Locale("es", "ES"));
@@ -229,6 +256,9 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
             // Actualizar el ViewModel con los datos meteorológicos
             outfitViewModel.setCurrentWeather(weather);
+
+            // Ocultar indicador de carga
+            showLoading(false);
         });
     }
 
@@ -244,7 +274,11 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     @Override
     public void showError(String message) {
-        runOnUiThread(() -> Toast.makeText(this, message, Toast.LENGTH_LONG).show());
+        runOnUiThread(() -> {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            // Ocultar indicador de carga en caso de error
+            showLoading(false);
+        });
     }
 
     @Override
@@ -273,7 +307,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnApply.setOnClickListener(v -> {
             String newLocation = autoCompleteTextView.getText().toString().trim();
             if (!newLocation.isEmpty()) {
-                cityName = newLocation;
+                currentCity = newLocation;
                 weatherController.loadWeatherData(newLocation);
                 dialog.dismiss();
             } else {
@@ -304,6 +338,16 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         // Aquí implementaremos la búsqueda de sugerencias
         // Por ahora, usaremos una implementación simple
         new LocationSuggestionTask(adapter).execute(query);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Recargar datos solo si se forzó la recarga al iniciar la actividad
+        if (forceReload) {
+            forceReload = false;
+            loadWeatherData();
+        }
     }
 
     @Override
