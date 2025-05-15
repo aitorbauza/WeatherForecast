@@ -192,7 +192,7 @@ public class MapManager{
             // Animar la cámara de forma rápida para evitar bloqueos
             googleMap.animateCamera(
                     CameraUpdateFactory.newLatLngBounds(constrainedBounds, padding),
-                    300, // Duración corta de la animación (300ms)
+                    500, // Duración corta de la animación (300ms)
                     null
             );
         } catch (Exception e) {
@@ -225,7 +225,7 @@ public class MapManager{
 
         // Limitar el número de marcadores para mejorar rendimiento
         List<RoutePoint> limitedPoints = new ArrayList<>();
-        int maxMarkers = 5; // Limitar a 5 marcadores como máximo
+        int maxMarkers = 4; // Limitar a 5 marcadores como máximo
 
         if (points.size() <= maxMarkers) {
             limitedPoints = points;

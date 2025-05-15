@@ -1,9 +1,13 @@
 package com.example.weatherforecast.ui;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.weatherforecast.model.UserPreferences;
+import com.example.weatherforecast.repository.PreferencesRepository;
 import com.example.weatherforecast.service.OutfitService;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.OutfitRecommendation;
@@ -15,9 +19,11 @@ public class OutfitViewModel extends ViewModel {
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private CurrentWeather currentWeather;
     private OutfitRecommendation.Style selectedStyle = OutfitRecommendation.Style.CASUAL; // Estilo predeterminado
+    private PreferencesRepository preferencesRepository;
 
-    public OutfitViewModel() {
+    public OutfitViewModel(Context context) {
         this.outfitService = new OutfitService();
+        this.preferencesRepository = new PreferencesRepository(context);
     }
 
     public LiveData<OutfitRecommendation> getOutfitRecommendation() {
@@ -55,7 +61,13 @@ public class OutfitViewModel extends ViewModel {
 
         isLoading.setValue(true);
         try {
-            OutfitRecommendation recommendation = outfitService.getOutfitRecommendation(currentWeather, selectedStyle);
+            // Obtener las preferencias del usuario
+            UserPreferences userPreferences = preferencesRepository.getUserPreferences();
+
+            // Pasar las preferencias al servicio
+            OutfitRecommendation recommendation =
+                    outfitService.getOutfitRecommendation(currentWeather, selectedStyle, userPreferences);
+
             outfitRecommendation.setValue(recommendation);
         } catch (Exception e) {
             errorMessage.setValue("Error al generar recomendación: " + e.getMessage());

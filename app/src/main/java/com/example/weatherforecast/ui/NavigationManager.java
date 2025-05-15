@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui.weather;
+package com.example.weatherforecast.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.core.app.ActivityOptionsCompat;
 
 import com.example.weatherforecast.R;
-import com.example.weatherforecast.ui.OutfitActivity;
 import com.example.weatherforecast.ui.route.RouteWeatherActivity;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

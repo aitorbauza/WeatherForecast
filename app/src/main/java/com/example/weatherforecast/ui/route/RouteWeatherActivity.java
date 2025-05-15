@@ -3,8 +3,6 @@ package com.example.weatherforecast.ui.route;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.model.RoutePoint;
-import com.example.weatherforecast.ui.weather.NavigationManager;
+import com.example.weatherforecast.ui.NavigationManager;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;

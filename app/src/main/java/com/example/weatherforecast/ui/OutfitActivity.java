@@ -30,8 +30,6 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitRecommendation;
-import com.example.weatherforecast.ui.weather.NavigationManager;
-import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -159,7 +157,8 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     }
 
     private void initViewModel() {
-        outfitViewModel = new ViewModelProvider(this).get(OutfitViewModel.class);
+        OutfitViewModelFactory factory = new OutfitViewModelFactory(this);
+        outfitViewModel = new ViewModelProvider(this, factory).get(OutfitViewModel.class);
 
         outfitViewModel.getOutfitRecommendation().observe(this, recommendation -> {
             showOutfitRecommendation(recommendation);

@@ -20,6 +20,7 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.WeatherCache;
+import com.example.weatherforecast.ui.NavigationManager;
 import com.example.weatherforecast.ui.SettingsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
