@@ -2,7 +2,6 @@ package com.example.weatherforecast.ui.route;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -11,10 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 
-import com.bumptech.glide.Glide;
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.model.RoutePoint;
 import com.example.weatherforecast.ui.weather.NavigationManager;
@@ -26,8 +22,6 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class RouteWeatherActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -37,8 +31,6 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
     private Button btnSearchRoute;
     private TextView weatherSummaryText;
     private BottomNavigationView bottomNavigation;
-    private ImageView toolbarLogo;
-    private ImageButton btnSettings;
 
     // Managers
     private RouteManager routeManager;
@@ -84,8 +76,6 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         btnSearchRoute = findViewById(R.id.btnSearchRoute);
         weatherSummaryText = findViewById(R.id.weatherSummaryText);
         bottomNavigation = findViewById(R.id.bottomNavigation);
-        btnSettings = findViewById(R.id.btnSettings);
-        toolbarLogo = findViewById(R.id.toolbarLogo);
 
         if (getIntent().hasExtra("ORIGIN_CITY")) {
             currentCity = getIntent().getStringExtra("ORIGIN_CITY");
@@ -109,26 +99,7 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         });
     }
 
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
-        // Load logo using Glide with placeholder and error handling
-        Glide.with(this)
-                .load(R.drawable.logo)
-                .into(toolbarLogo);
-
-        btnSettings.setOnClickListener(v -> {
-            Toast.makeText(RouteWeatherActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
-            // Launch settings activity here
-        });
-    }
-
     public void setUpUI(){
-        setupToolbar();
         navigationManager.setupBottomNavigation();
     }
 

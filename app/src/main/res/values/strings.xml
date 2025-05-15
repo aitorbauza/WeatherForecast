@@ -11,4 +11,28 @@
     <string name="apply_location">Aplicar</string>
     <string name="enter_location">Introduce ciudad o región</string>
     <string name="location_empty">Por favor, introduce una ubicación</string>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="profile_title">Mi Perfil</string>
+    <string name="name_hint">Nombre</string>
+    <string name="surname_hint">Apellidos</string>
+
+    <string name="gender_title">Sexo</string>
+    <string name="male_option">Masculino</string>
+    <string name="female_option">Femenino</string>
+    <string name="other_option">Otro</string>
+
+    <string name="cold_tolerance_title">Tolerancia al Frío</string>
+    <string name="heat_tolerance_title">Tolerancia al Calor</string>
+    <string name="low_option">Poca</string>
+    <string name="normal_option">Normal</string>
+    <string name="high_option">Mucha</string>
+
+    <string name="save_button">Guardar</string>
+    <string name="reset_button">Restablecer</string>
+    <string name="home_button_desc">Volver a la pantalla principal</string>
+    <string name="app_logo">Logo de la aplicación</string>
+
+    <string name="settings_saved_message">Ajustes guardados correctamente</string>
+    <string name="settings_reset_message">Ajustes restablecidos</string>
 </resources>

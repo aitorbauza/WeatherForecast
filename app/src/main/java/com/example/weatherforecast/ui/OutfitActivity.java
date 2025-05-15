@@ -191,7 +191,8 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         // Configurar botón de ajustes
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(OutfitActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
-            // Aquí puedes lanzar la actividad de ajustes
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         });
     }
 

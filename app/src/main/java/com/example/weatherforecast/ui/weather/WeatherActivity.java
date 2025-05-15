@@ -20,6 +20,7 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.WeatherCache;
+import com.example.weatherforecast.ui.SettingsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_weather);
 
         // Inicializar caché
         weatherCache = new WeatherCache(this);
@@ -175,7 +176,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
 
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(WeatherActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
-            // Launch settings activity here
+            Intent intent = new Intent(WeatherActivity.this, SettingsActivity.class);
+            startActivity(intent);
         });
     }
 

@@ -34,6 +34,11 @@
             android:exported="true">
         </activity>
 
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="true">
+        </activity>
+
         <!-- Required Google Maps libraries -->
         <uses-library
             android:name="org.apache.http.legacy"

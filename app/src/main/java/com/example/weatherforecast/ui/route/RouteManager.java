@@ -5,12 +5,14 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
+import com.google.maps.model.Bounds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,11 @@ public class RouteManager {
 
     private static final String MAPS_API_KEY = "AIzaSyBF5Bi-0WWKdREJqpJwdFMOl1bA5y7Xbv8"; // Replace with your Google Maps API key
 
+    // Definir los límites de España como constantes
+    private static final com.google.maps.model.LatLng SPAIN_NORTHEAST = new com.google.maps.model.LatLng(43.7902, 3.3350);
+    private static final com.google.maps.model.LatLng SPAIN_SOUTHWEST = new com.google.maps.model.LatLng(36.0001, -9.3000);
+    private static final String SPAIN_REGION = "es"; // Código de región para España
+
     private final ExecutorService executorService;
     private final GeoApiContext geoApiContext;
     private final Context context;
@@ -38,7 +45,7 @@ public class RouteManager {
         this.context = context;
         this.executorService = Executors.newSingleThreadExecutor();
 
-        // Initialize API context in background
+        // Initialize API context with optimizaciones para España
         this.geoApiContext = new GeoApiContext.Builder()
                 .apiKey(MAPS_API_KEY)
                 .connectTimeout(2, TimeUnit.SECONDS)
@@ -50,19 +57,36 @@ public class RouteManager {
     public void calculateRoute(String origin, String destination, RouteCalculationCallback callback) {
         executorService.execute(() -> {
             try {
-                // Añadir timeout más corto para evitar bloqueos prolongados
+                // Validar que el origen y destino son lugares en España
+                if (!validateSpainLocation(origin, destination)) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        callback.onRouteCalculationFailed("La ruta debe estar dentro de España");
+                    });
+                    return;
+                }
+
+                // Configurar la solicitud de ruta con restricciones para España
                 DirectionsApi.newRequest(geoApiContext)
                         .mode(TravelMode.DRIVING)
                         .origin(origin)
                         .destination(destination)
+                        .region(SPAIN_REGION) // Limitar a España
+                        .alternatives(false) // Desactivar rutas alternativas para mejor rendimiento
+                        .optimizeWaypoints(true) // Optimizar para mejor rendimiento
                         .setCallback(new PendingResult.Callback<DirectionsResult>() {
                             @Override
                             public void onResult(DirectionsResult result) {
                                 if (result.routes.length > 0) {
-                                    // Limitar el procesamiento
-                                    processRouteResultSimplified(result.routes[0], callback);
+                                    // Verificar que la ruta está en España antes de procesarla
+                                    if (isRouteInSpain(result.routes[0])) {
+                                        processRouteResultSimplified(result.routes[0], callback);
+                                    } else {
+                                        new Handler(Looper.getMainLooper()).post(() -> {
+                                            callback.onRouteCalculationFailed("La ruta está fuera de España");
+                                        });
+                                    }
                                 } else {
-                                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                                    new Handler(Looper.getMainLooper()).post(() -> {
                                         callback.onRouteCalculationFailed("No se encontró ninguna ruta");
                                     });
                                 }
@@ -70,18 +94,67 @@ public class RouteManager {
 
                             @Override
                             public void onFailure(Throwable e) {
-                                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                                new Handler(Looper.getMainLooper()).post(() -> {
                                     callback.onRouteCalculationFailed(e.getMessage());
                                 });
                             }
                         });
 
             } catch (Exception e) {
-                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                new Handler(Looper.getMainLooper()).post(() -> {
                     callback.onRouteCalculationFailed(e.getMessage());
                 });
             }
         });
+    }
+
+    // Método para validar que las ubicaciones están en España
+    private boolean validateSpainLocation(String origin, String destination) {
+        // Para simplificar, verificamos si los nombres terminan en España o contienen España
+        // Esto es una aproximación básica, podría mejorarse con geocoding real
+        String lowerOrigin = origin.toLowerCase();
+        String lowerDest = destination.toLowerCase();
+
+        // Lista de ciudades principales de España para optimizar la validación
+        String[] spanishCities = {"madrid", "barcelona", "valencia", "sevilla", "zaragoza",
+                "málaga", "murcia", "palma", "bilbao", "alicante",
+                "córdoba", "valladolid", "vigo", "gijón", "españa", "spain"};
+
+        boolean originInSpain = false;
+        boolean destInSpain = false;
+
+        // Verificar si el origen es una ciudad española
+        for (String city : spanishCities) {
+            if (lowerOrigin.contains(city)) {
+                originInSpain = true;
+                break;
+            }
+        }
+
+        // Verificar si el destino es una ciudad española
+        for (String city : spanishCities) {
+            if (lowerDest.contains(city)) {
+                destInSpain = true;
+                break;
+            }
+        }
+
+        // Aceptar la ruta si ambos puntos parecen estar en España
+        return originInSpain && destInSpain;
+    }
+
+    // Verificar si la ruta calculada está dentro de España
+    private boolean isRouteInSpain(DirectionsRoute route) {
+        // Verificar usando el bounding box de la ruta
+        Bounds bounds = route.bounds;
+
+        // Crear un rectángulo con los límites de la ruta
+        boolean isNortheastInSpain = bounds.northeast.lat <= SPAIN_NORTHEAST.lat &&
+                bounds.northeast.lng <= SPAIN_NORTHEAST.lng;
+        boolean isSouthwestInSpain = bounds.southwest.lat >= SPAIN_SOUTHWEST.lat &&
+                bounds.southwest.lng >= SPAIN_SOUTHWEST.lng;
+
+        return isNortheastInSpain && isSouthwestInSpain;
     }
 
     // Versión simplificada del procesador de rutas
@@ -91,8 +164,8 @@ public class RouteManager {
             List<LatLng> routePoints = new ArrayList<>();
             List<com.google.maps.model.LatLng> decodedPath = route.overviewPolyline.decodePath();
 
-            // Limitar a máximo 200 puntos para evitar sobrecarga
-            int step = Math.max(1, decodedPath.size() / 200);
+            // Limitar a máximo 100 puntos para evitar sobrecarga (reducido de 200)
+            int step = Math.max(1, decodedPath.size() / 100);
             for (int i = 0; i < decodedPath.size(); i += step) {
                 com.google.maps.model.LatLng latLng = decodedPath.get(i);
                 routePoints.add(new LatLng(latLng.lat, latLng.lng));
@@ -108,11 +181,11 @@ public class RouteManager {
             double distanceInMeters = route.legs[0].distance.inMeters;
             double distanceInKm = distanceInMeters / 1000;
 
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 callback.onRouteCalculated(routePoints, distanceInKm);
             });
         } catch (Exception e) {
-            new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
                 callback.onRouteCalculationFailed(e.getMessage());
             });
         }
