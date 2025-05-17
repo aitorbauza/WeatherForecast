@@ -1,6 +1,8 @@
 package com.example.weatherforecast.ui;
 
+import android.content.Context;
 import android.content.Intent;  // Añadido
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;  // Añadido
 import android.text.Editable;
@@ -22,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.R;
@@ -31,6 +35,7 @@ import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitRecommendation;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +76,10 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     private BottomNavigationView bottomNavigation;
 
     private NavigationManager navigationManager;
+
+    private Button btnCustomizeOutfit;
+    private Button btnSaveOutfit;
+    private boolean isCustomized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +149,11 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnSettings = findViewById(R.id.btnSettings);
         toolbarLogo = findViewById(R.id.toolbarLogo);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+
+        btnCustomizeOutfit = findViewById(R.id.btnCustomizeOutfit);
+        btnSaveOutfit = findViewById(R.id.btnSaveOutfit);
+
+        btnSaveOutfit.setEnabled(false); // Desactivado por defecto hasta personalización
 
         navigationManager = new NavigationManager(
                 this,
@@ -215,6 +229,78 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnLoadOutfit.setOnClickListener(v -> {
             outfitViewModel.loadOutfitRecommendation();
         });
+
+        btnCustomizeOutfit.setOnClickListener(v -> {
+            showCustomizeDialog();
+        });
+
+        // Listener para el botón de guardar
+        btnSaveOutfit.setOnClickListener(v -> {
+            saveCustomizedOutfit();
+        });
+    }
+
+    // Método para mostrar el dialog de personalización
+    private void showCustomizeDialog() {
+        // Obtenemos la recomendación actual
+        OutfitRecommendation currentOutfit = outfitViewModel.getOutfitRecommendation().getValue();
+        if (currentOutfit == null) return;
+
+        // Crear el layout para el diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_customize_outfit, null);
+        builder.setView(dialogView);
+
+        // Configurar el RecyclerView para mostrar los items del outfit
+        RecyclerView rvOutfitItems = dialogView.findViewById(R.id.rvOutfitItems);
+        rvOutfitItems.setLayoutManager(new LinearLayoutManager(this));
+
+        // Crear el adaptador con todas las categorías de prendas
+        OutfitCustomizeAdapter adapter = new OutfitCustomizeAdapter(this, currentOutfit);
+        rvOutfitItems.setAdapter(adapter);
+
+        // Botones del diálogo
+        Button btnApply = dialogView.findViewById(R.id.btnApplyCustomization);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancelCustomization);
+
+        AlertDialog dialog = builder.create();
+
+        // Configurar acciones de los botones
+        btnApply.setOnClickListener(v -> {
+            // Aplicar cambios de personalización
+            OutfitRecommendation customizedOutfit = adapter.getCustomizedOutfit();
+            outfitViewModel.setCustomizedOutfit(customizedOutfit);
+            showOutfitRecommendation(customizedOutfit);
+
+            // Activar el botón de guardar
+            btnSaveOutfit.setEnabled(true);
+            isCustomized = true;
+
+            dialog.dismiss();
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    // Método para guardar el outfit personalizado
+    private void saveCustomizedOutfit() {
+        if (!isCustomized) return;
+
+        OutfitRecommendation customOutfit = outfitViewModel.getOutfitRecommendation().getValue();
+        if (customOutfit != null) {
+            // Usar el repositorio para guardar
+            boolean saved = outfitViewModel.saveCustomizedOutfit(customOutfit, this);
+
+            if (saved) {
+                Toast.makeText(this, "Outfit guardado correctamente", Toast.LENGTH_SHORT).show();
+                btnSaveOutfit.setEnabled(false);
+                isCustomized = false;
+            } else {
+                Toast.makeText(this, "Error al guardar el outfit", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void loadWeatherData() {
@@ -343,8 +429,17 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar datos solo si se forzó la recarga al iniciar la actividad
-        if (forceReload) {
+        // Intentar cargar outfit guardado si no estamos forzando recarga
+        if (!forceReload) {
+            boolean outfitLoaded = outfitViewModel.loadSavedOutfit(this);
+
+            // Si no hay outfit guardado o si se forzó la recarga, cargar datos del clima
+            if (!outfitLoaded && forceReload) {
+                forceReload = false;
+                loadWeatherData();
+            }
+        } else {
+            // Si se forzó la recarga, cargar datos del clima
             forceReload = false;
             loadWeatherData();
         }

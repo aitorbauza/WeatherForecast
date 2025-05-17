@@ -75,4 +75,29 @@ public class OutfitViewModel extends ViewModel {
             isLoading.setValue(false);
         }
     }
+
+    public void setCustomizedOutfit(OutfitRecommendation customizedOutfit) {
+        outfitRecommendation.setValue(customizedOutfit);
+    }
+
+    // En OutfitViewModel.java - añadir método para cargar outfit guardado
+    public boolean loadSavedOutfit(Context context) {
+
+        OutfitRecommendation savedOutfit = preferencesRepository.getSavedOutfit(context);
+        if (savedOutfit != null) {
+            outfitRecommendation.setValue(savedOutfit);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean saveCustomizedOutfit(OutfitRecommendation outfit, Context context) {
+        try {
+            preferencesRepository.saveOutfit(outfit, context);
+            return true;
+        } catch (Exception e) {
+            errorMessage.setValue("Error al guardar outfit: " + e.getMessage());
+            return false;
+        }
+    }
 }

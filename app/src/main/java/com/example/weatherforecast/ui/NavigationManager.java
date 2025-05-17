@@ -110,21 +110,19 @@ public class NavigationManager {
     /**
      * Navega a la pantalla de vestimenta
      */
+    // En NavigationManager.java - modificar navigateToOutfitScreen()
     private void navigateToOutfitScreen() {
         Intent intent = new Intent(context, OutfitActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
-
-        // Añadir información de la actividad anterior para ayudar en la depuración
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
-        // Forzar la recarga de datos solo si venimos de una actividad diferente
+        // No forzar la recarga para preservar los datos del outfit
+        // Solo forzar si venimos de otra actividad y necesitamos nueva info del clima
         if (currentActivity != ActivityType.OUTFIT) {
-            intent.putExtra(EXTRA_FORCE_RELOAD, true);
+            intent.putExtra(EXTRA_FORCE_RELOAD, false);  // Cambiar a false para no perder datos
         }
 
-        // Usar una estrategia de flags uniforme
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         context.startActivity(intent);
         applyTransition();
     }

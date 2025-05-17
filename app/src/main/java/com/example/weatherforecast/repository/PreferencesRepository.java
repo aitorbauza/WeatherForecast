@@ -3,7 +3,9 @@ package com.example.weatherforecast.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.weatherforecast.model.OutfitRecommendation;
 import com.example.weatherforecast.model.UserPreferences;
+import com.google.gson.Gson;
 
 /**
  * Clase encargada de gestionar el almacenamiento y recuperación de las preferencias del usuario.
@@ -83,6 +85,33 @@ public class PreferencesRepository {
     public void resetUserPreferences() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
+        editor.apply();
+    }
+
+    // En PreferencesRepository.java - añadir método para obtener outfit guardado
+    public OutfitRecommendation getSavedOutfit(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
+        String outfitJson = prefs.getString("saved_outfit", null);
+
+        if (outfitJson != null && !outfitJson.isEmpty()) {
+            try {
+                Gson gson = new Gson();
+                return gson.fromJson(outfitJson, OutfitRecommendation.class);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    // En PreferencesRepository.java - añadir método para guardar outfit
+    public void saveOutfit(OutfitRecommendation outfit, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        Gson gson = new Gson();
+        String outfitJson = gson.toJson(outfit);
+        editor.putString("saved_outfit", outfitJson);
         editor.apply();
     }
 }
