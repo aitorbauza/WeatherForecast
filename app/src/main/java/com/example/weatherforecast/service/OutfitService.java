@@ -5,26 +5,26 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.UserPreferences;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+
+/**
+ * Clase encargada de generar una recomendación de outfit basado en el clima actual
+ * , el estilo seleccionado y las preferencias del usuario
+ */
 public class OutfitService {
 
     // Constantes de temperatura
-    private static final double VERY_COLD = 5.0;   // <= 5°C
-    private static final double COLD = 14.0;       // <= 14°C
-    private static final double MILD = 22.0;       // <= 22°C
-    private static final double HOT = 28.0;        // <= 28°C
+    private static final double VERY_COLD = 5.0;
+    private static final double COLD = 14.0;
+    private static final double MILD = 22.0;
+    private static final double HOT = 28.0;
     // > 28°C es MUY CALUROSO
 
     // Constantes de humedad
-    private static final int HIGH_HUMIDITY = 70;    // >= 70% se considera alta humedad
-    private static final int LOW_HUMIDITY = 30;     // <= 30% se considera baja humedad
+    private static final int HIGH_HUMIDITY = 70;    //alta humedad
+    private static final int LOW_HUMIDITY = 30;     // baja humedad
 
-    /**
-     * Genera una recomendación de outfit basado en el clima actual, el estilo seleccionado
-     * y las preferencias del usuario
-     */
     public OutfitRecommendation getOutfitRecommendation(CurrentWeather weather,
                                                         OutfitRecommendation.Style style,
                                                         UserPreferences userPreferences) {
@@ -36,15 +36,15 @@ public class OutfitService {
         boolean isCloudy = condition.contains("cloud") || condition.contains("nublado");
         boolean isWindy = condition.contains("wind") || condition.contains("viento");
 
-        // Obtener preferencias del usuario
+        // Preferencias del usuario
         UserPreferences.Gender gender = userPreferences.getGender();
         UserPreferences.Tolerance coldTolerance = userPreferences.getColdTolerance();
         UserPreferences.Tolerance heatTolerance = userPreferences.getHeatTolerance();
 
-        // Ajustar la temperatura según las tolerancias personales
+        // Temperatura según las tolerancias personales
         double adjustedTemperature = adjustTemperatureByTolerances(temperature, coldTolerance, heatTolerance);
 
-        // Ajustar según la humedad (original)
+        // Ajustar según la humedad
         adjustedTemperature = adjustTemperatureByHumidity(adjustedTemperature, humidity);
 
         List<String> tops = new ArrayList<>();
@@ -53,7 +53,7 @@ public class OutfitService {
         List<String> outerwear = new ArrayList<>();
         List<String> accessories = new ArrayList<>();
 
-        // Ahora usamos adjustedTemperature para las decisiones
+        // Usamos adjustedTemperature para las decisiones
         if (adjustedTemperature <= VERY_COLD) {
             generateVeryColdOutfit(style, tops, bottoms, shoes, outerwear, accessories, gender);
         } else if (adjustedTemperature <= COLD) {
@@ -66,12 +66,10 @@ public class OutfitService {
             generateVeryHotOutfit(style, tops, bottoms, shoes, outerwear, accessories, gender);
         }
 
-        // Añadir recomendaciones específicas de humedad
-        if (humidity >= HIGH_HUMIDITY) {
-            addHighHumidityItems(adjustedTemperature, accessories);
+        if (humidity >= HIGH_HUMIDITY) { // Si la humedad es alta
+            addHighHumidityItems(adjustedTemperature, accessories); // Agregamos elementos
         }
 
-        // El resto del método permanece similar
         if (isRainy) {
             addRainyDayItems(style, outerwear, accessories, shoes, gender);
         }
@@ -87,9 +85,7 @@ public class OutfitService {
         return new OutfitRecommendation(tops, bottoms, shoes, outerwear, accessories, style);
     }
 
-    /**
-     * Ajusta la temperatura según las tolerancias personales al frío y calor del usuario
-     */
+     // Ajusta la temperatura según las tolerancias personales al frío y calor del usuario
     private double adjustTemperatureByTolerances(double temperature,
                                                  UserPreferences.Tolerance coldTolerance,
                                                  UserPreferences.Tolerance heatTolerance) {
@@ -116,82 +112,84 @@ public class OutfitService {
         return adjustedTemp;
     }
 
+    // Método que genera un outfit para clima muy frío
     private void generateVeryColdOutfit(OutfitRecommendation.Style style,
                                         List<String> tops, List<String> bottoms,
                                         List<String> shoes, List<String> outerwear,
                                         List<String> accessories, UserPreferences.Gender gender) {
-        // Accesorios comunes para clima muy frío
-        accessories.addAll(Arrays.asList("Gorro de lana", "Bufanda gruesa", "Guantes"));
+        // Accesorios comunes
+        accessories.add("Gorro de lana");
+        accessories.add("Bufanda gruesa");
+        accessories.add("Guantes");
 
         switch (style) {
             case CASUAL:
                 tops.add("Camiseta térmica de manga larga");
-                tops.add("Suéter grueso");
 
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Jersey de cuello alto");
-                    bottoms.add("Jeans gruesos o leggings térmicos");
-                    shoes.add("Botas de invierno acolchadas");
-                    accessories.add("Orejeras acolchadas");
+                    tops.add("Jersey de lana mujer");
+                    bottoms.add("Vaqueros");
+                    shoes.add("Botas de invierno mujer");
+                    outerwear.add("Abrigo de plumas mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Jersey de lana");
-                    bottoms.add("Jeans gruesos o pantalón de pana");
-                    shoes.add("Botas de montaña");
+                    tops.add("Jersey de lana hombre");
+                    bottoms.add("Vaqueros");
+                    shoes.add("Botas de invierno hombre");
+                    outerwear.add("Abrigo de plumas hombre");
                 } else {
-                    bottoms.add("Jeans gruesos");
+                    tops.add("Jersey de lana");
+                    bottoms.add("Vaqueros");
                     shoes.add("Botas de invierno");
+                    outerwear.add("Abrigo de plumas");
                 }
-
-                outerwear.add("Abrigo de plumas");
                 break;
 
             case SPORTY:
                 tops.add("Camiseta térmica deportiva");
 
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Sudadera polar ajustada");
+                    tops.add("Sudadera polar mujer");
                     bottoms.add("Mallas térmicas");
-                    shoes.add("Zapatillas de trail con aislamiento");
+                    shoes.add("Zapatillas deportivas mujer");
+                    outerwear.add("Chaqueta deportiva mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Sudadera polar");
+                    tops.add("Sudadera polar hombre");
                     bottoms.add("Pantalón deportivo térmico");
-                    shoes.add("Zapatillas trail resistentes al frío");
+                    shoes.add("Zapatillas deportivas hombre");
+                    outerwear.add("Chaqueta deportiva hombre");
                 } else {
                     tops.add("Sudadera polar");
                     bottoms.add("Pantalón deportivo térmico");
-                    shoes.add("Zapatillas deportivas resistentes al frío");
+                    shoes.add("Zapatillas deportivas");
+                    outerwear.add("Chaqueta deportiva");
                 }
-
-                outerwear.add("Chaqueta deportiva aislante");
                 break;
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa de manga larga");
-                    tops.add("Jersey de cachemira");
-                    bottoms.add("Falda de lana con medias térmicas o pantalón de vestir forrado");
-                    shoes.add("Botas elegantes de tacón bajo");
-                    outerwear.add("Abrigo de lana entallado");
-                    accessories.add("Fulard elegante");
+                    tops.add("Jersey formal mujer");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales mujer");
+                    outerwear.add("Abrigo de lana mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de manga larga");
-                    tops.add("Chaleco");
-                    tops.add("Jersey de lana");
-                    bottoms.add("Pantalón de vestir de lana");
-                    shoes.add("Zapatos Oxford con calcetines térmicos");
-                    outerwear.add("Abrigo de lana largo");
-                    accessories.add("Corbata de lana");
+                    tops.add("Jersey formal hombre");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales hombre");
+                    outerwear.add("Abrigo de lana hombre");
                 } else {
                     tops.add("Camisa de manga larga");
-                    tops.add("Jersey elegante");
-                    bottoms.add("Pantalón de vestir de lana");
-                    shoes.add("Zapatos formales con calcetines térmicos");
+                    tops.add("Jersey formal");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales");
                     outerwear.add("Abrigo de lana");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima frío
     private void generateColdOutfit(OutfitRecommendation.Style style,
                                     List<String> tops, List<String> bottoms,
                                     List<String> shoes, List<String> outerwear,
@@ -200,74 +198,68 @@ public class OutfitService {
 
         switch (style) {
             case CASUAL:
+                tops.add("Camiseta de manga larga");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Camiseta de manga larga");
-                    tops.add("Suéter ligero");
-                    bottoms.add("Jeans o pantalón recto");
-                    shoes.add("Botines o botas hasta el tobillo");
-                    outerwear.add("Chaqueta acolchada");
-                    accessories.add("Gorro de punto ligero");
+                    tops.add("Suéter ligero mujer");
+                    bottoms.add("Vaqueros");
+                    shoes.add("Botines mujer");
+                    outerwear.add("Chaqueta mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta de manga larga");
-                    tops.add("Sudadera ligera");
-                    bottoms.add("Jeans");
-                    shoes.add("Botines o zapatillas altas");
-                    outerwear.add("Chaqueta acolchada");
+                    tops.add("Suéter ligero hombre");
+                    bottoms.add("Vaqueros");
+                    shoes.add("Botines hombre");
+                    outerwear.add("Chaqueta hombre");
                 } else {
-                    tops.add("Camiseta de manga larga");
-                    bottoms.add("Jeans");
+                    tops.add("Suéter ligero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Botines");
-                    outerwear.add("Chaqueta acolchada");
+                    outerwear.add("Chaqueta");
                 }
                 break;
 
             case SPORTY:
+                tops.add("Camiseta técnica de manga larga");
+                bottoms.add("Pantalón deportivo");
+                outerwear.add("Chaqueta cortavientos");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Camiseta técnica de manga larga");
-                    bottoms.add("Mallas o pantalón deportivo");
-                    shoes.add("Zapatillas deportivas con calcetines térmicos");
-                    outerwear.add("Chaqueta cortavientos");
+                    shoes.add("Zapatillas deportivas mujer");
                     accessories.add("Banda para las orejas");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta técnica de manga larga");
-                    bottoms.add("Pantalón deportivo");
-                    shoes.add("Zapatillas deportivas con calcetines");
-                    outerwear.add("Chaqueta cortavientos");
+                    shoes.add("Zapatillas deportivas hombre");
                     accessories.add("Gorro deportivo");
                 } else {
-                    tops.add("Camiseta técnica de manga larga");
-                    bottoms.add("Pantalón deportivo");
                     shoes.add("Zapatillas deportivas");
-                    outerwear.add("Chaqueta cortavientos");
                     accessories.add("Gorro deportivo");
                 }
                 break;
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Blusa o camisa elegante");
-                    tops.add("Jersey fino o cárdigan");
-                    bottoms.add("Pantalón de vestir o falda con medias");
-                    shoes.add("Zapatos cerrados o botines de tacón");
-                    outerwear.add("Blazer forrado o abrigo corto");
+                    tops.add("Blusa");
+                    tops.add("Jersey fino mujer");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales mujer");
+                    outerwear.add("Blazer mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de vestir");
-                    tops.add("Jersey fino o chaleco");
+                    tops.add("Jersey fino hombre");
                     bottoms.add("Pantalón de vestir");
-                    shoes.add("Zapatos Oxford o Derby");
-                    outerwear.add("Blazer forrado");
-                    accessories.add("Pañuelo de bolsillo");
+                    shoes.add("Zapatos formales hombre");
+                    outerwear.add("Blazer hombre");
                 } else {
                     tops.add("Camisa de vestir");
                     tops.add("Jersey fino");
                     bottoms.add("Pantalón de vestir");
-                    shoes.add("Zapatos Oxford");
-                    outerwear.add("Blazer forrado");
+                    shoes.add("Zapatos formales");
+                    outerwear.add("Blazer");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima normal
     private void generateMildOutfit(OutfitRecommendation.Style style,
                                     List<String> tops, List<String> bottoms,
                                     List<String> shoes, List<String> outerwear,
@@ -275,66 +267,63 @@ public class OutfitService {
         switch (style) {
             case CASUAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Camiseta o blusa de algodón");
-                    bottoms.add("Jeans, pantalón chino o falda casual");
-                    shoes.add("Zapatillas casuales o bailarinas");
-                    outerwear.add("Cárdigan o chaqueta ligera");
+                    tops.add("Camiseta de algodón mujer");
+                    bottoms.add("Pantalón casual");
+                    shoes.add("Zapatillas casuales mujer");
+                    outerwear.add("Chaqueta ligera mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta o polo de algodón");
-                    bottoms.add("Jeans o pantalón chino");
-                    shoes.add("Zapatillas casuales o mocasines");
-                    outerwear.add("Sudadera o chaqueta ligera");
+                    tops.add("Camiseta de algodón hombre");
+                    bottoms.add("Pantalón casual");
+                    shoes.add("Zapatillas casuales hombre");
+                    outerwear.add("Chaqueta ligera hombre");
                 } else {
                     tops.add("Camiseta de algodón");
-                    bottoms.add("Jeans o pantalón chino");
+                    bottoms.add("Pantalón casual");
                     shoes.add("Zapatillas casuales");
-                    outerwear.add("Sudadera o chaqueta ligera");
+                    outerwear.add("Chaqueta ligera");
                 }
                 break;
 
             case SPORTY:
+                accessories.add("Gorra");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Camiseta técnica o top deportivo");
-                    bottoms.add("Mallas o pantalón corto deportivo");
-                    shoes.add("Zapatillas deportivas ligeras");
-                    outerwear.add("Chaqueta deportiva ligera");
-                    accessories.add("Visera o gorra");
+                    tops.add("Camiseta técnica mujer");
+                    bottoms.add("Mallas");
+                    shoes.add("Zapatillas deportivas mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta técnica");
+                    tops.add("Camiseta técnica hombre");
                     bottoms.add("Pantalón corto deportivo");
-                    shoes.add("Zapatillas deportivas ligeras");
-                    outerwear.add("Sudadera con capucha");
-                    accessories.add("Gorra");
+                    shoes.add("Zapatillas deportivas hombre");
                 } else {
                     tops.add("Camiseta técnica");
-                    bottoms.add("Pantalón corto deportivo o leggings");
-                    shoes.add("Zapatillas deportivas ligeras");
-                    outerwear.add("Sudadera con capucha");
-                    accessories.add("Gorra");
+                    bottoms.add("Leggings");
+                    shoes.add("Zapatillas deportivas");
                 }
                 break;
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Blusa o camisa elegante");
-                    bottoms.add("Pantalón de vestir, falda o vestido");
-                    shoes.add("Zapatos de tacón medio o bailarinas elegantes");
-                    outerwear.add("Blazer ligero");
+                    tops.add("Camisa elegante mujer");
+                    bottoms.add("Falda formal");
+                    shoes.add("Zapatos formales mujer");
+                    outerwear.add("Blazer ligero mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camisa de manga larga");
-                    bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos de vestir");
-                    outerwear.add("Americana ligera");
+                    tops.add("Camisa elegante hombre");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales hombre");
+                    outerwear.add("Blazer ligero hombre");
                 } else {
-                    tops.add("Camisa de manga larga");
-                    bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos de vestir");
-                    outerwear.add("Americana ligera");
+                    tops.add("Camisa elegante");
+                    bottoms.add("Pantalón de vestir");
+                    shoes.add("Zapatos formales");
+                    outerwear.add("Blazer ligero");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima caluroso
     private void generateHotOutfit(OutfitRecommendation.Style style,
                                    List<String> tops, List<String> bottoms,
                                    List<String> shoes, List<String> outerwear,
@@ -343,61 +332,60 @@ public class OutfitService {
 
         switch (style) {
             case CASUAL:
+                accessories.add("Sombrero");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Camiseta de tirantes o blusa ligera");
-                    bottoms.add("Falda, vestido veraniego o pantalón corto");
-                    shoes.add("Sandalias o alpargatas");
-                    accessories.add("Sombrero de ala ancha");
+                    tops.add("Camiseta de tirantes mujer");
+                    bottoms.add("Pantalón corto");
+                    shoes.add("Sandalias mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta de manga corta o polo");
-                    bottoms.add("Bermudas o pantalón corto ligero");
-                    shoes.add("Sandalias o zapatillas ligeras");
-                    accessories.add("Gorra");
+                    tops.add("Camiseta de manga corta hombre");
+                    bottoms.add("Pantalón corto");
+                    shoes.add("Sandalias hombre");
                 } else {
                     tops.add("Camiseta de manga corta");
-                    bottoms.add("Pantalón corto o falda");
-                    shoes.add("Sandalias o zapatillas ligeras");
+                    bottoms.add("Pantalón corto");
+                    shoes.add("Sandalias");
                 }
                 break;
 
             case SPORTY:
+                accessories.add("Gorra con visera");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Top deportivo o camiseta técnica sin mangas");
-                    bottoms.add("Mallas cortas o pantalón corto deportivo");
-                    shoes.add("Zapatillas deportivas ligeras y transpirables");
-                    accessories.add("Visera y banda para el pelo");
-                } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta técnica transpirable");
-                    bottoms.add("Pantalón corto deportivo ligero");
-                    shoes.add("Zapatillas deportivas ligeras");
-                    accessories.add("Gorra con visera o cinta para la frente");
-                } else {
-                    tops.add("Camiseta técnica transpirable");
+                    tops.add("Camiseta técnica sin mangas mujer");
                     bottoms.add("Pantalón corto deportivo");
-                    shoes.add("Zapatillas deportivas ligeras");
-                    accessories.add("Gorra con visera");
+                    shoes.add("Zapatillas deportivas mujer");
+                } else if (gender == UserPreferences.Gender.MALE) {
+                    tops.add("Camiseta técnica hombre");
+                    bottoms.add("Pantalón corto deportivo");
+                    shoes.add("Zapatillas deportivas hombre");
+                } else {
+                    tops.add("Camiseta técnica");
+                    bottoms.add("Pantalón corto deportivo");
+                    shoes.add("Zapatillas deportivas");
                 }
                 break;
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Blusa ligera de materiales naturales");
-                    bottoms.add("Falda o pantalón de vestir ligero");
-                    shoes.add("Sandalias elegantes o zapatos abiertos");
-                    accessories.add("Pañuelo ligero");
+                    tops.add("Blusa ligera formal mujer");
+                    bottoms.add("Pantalón de vestir ligero");
+                    shoes.add("Zapatos formales ligeros mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camisa de manga corta o larga arremangada");
+                    tops.add("Camisa de manga corta formal hombre");
                     bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos ligeros o mocasines");
+                    shoes.add("Zapatos formales ligeros hombre");
                 } else {
-                    tops.add("Camisa de manga corta o larga arremangada");
+                    tops.add("Camisa ligera formal");
                     bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos ligeros");
+                    shoes.add("Zapatos formales ligeros");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima muy caluroso
     private void generateVeryHotOutfit(OutfitRecommendation.Style style,
                                        List<String> tops, List<String> bottoms,
                                        List<String> shoes, List<String> outerwear,
@@ -407,63 +395,60 @@ public class OutfitService {
 
         switch (style) {
             case CASUAL:
+                accessories.add("Sombrero");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Top ligero, camiseta sin mangas o blusa ligera");
-                    bottoms.add("Vestido veraniego, falda ligera o shorts");
-                    shoes.add("Sandalias o chanclas");
-                    accessories.add("Sombrero de ala ancha o pamela");
-                    accessories.add("Abanico");
+                    tops.add("Top ligero mujer");
+                    bottoms.add("Pantalón corto");
+                    shoes.add("Sandalias mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta sin mangas o camisa muy ligera");
-                    bottoms.add("Bermudas o pantalón corto ligero");
-                    shoes.add("Sandalias o chanclas");
-                    accessories.add("Sombrero o gorra");
+                    tops.add("Camiseta de tirantes hombre");
+                    bottoms.add("Pantalón corto");
+                    shoes.add("Sandalias hombre");
                 } else {
-                    tops.add("Camiseta sin mangas o de tejido ligero");
-                    bottoms.add("Pantalón corto o falda ligera");
+                    tops.add("Camiseta de tirantes");
+                    bottoms.add("Pantalón corto");
                     shoes.add("Sandalias");
-                    accessories.add("Sombrero o gorra para protección solar");
                 }
                 break;
 
             case SPORTY:
+                accessories.add("Gorra deportiva");
+
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Top deportivo o camiseta técnica ultraligera");
-                    bottoms.add("Pantalón corto deportivo muy ligero o falda-pantalón");
-                    shoes.add("Zapatillas deportivas transpirables o sandalias deportivas");
-                    accessories.add("Visera y muñequeras absorbentes");
+                    tops.add("Top deportivo mujer");
+                    bottoms.add("Pantalón corto deportivo");
+                    shoes.add("Zapatillas deportivas mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camiseta técnica sin mangas o de manga corta ultraligera");
-                    bottoms.add("Pantalón corto deportivo ligero");
-                    shoes.add("Zapatillas deportivas ultratranspirables");
-                    accessories.add("Gorra técnica con protección UV");
+                    tops.add("Camiseta de tirantes deportiva hombre");
+                    bottoms.add("Pantalón corto deportivo");
+                    shoes.add("Zapatillas deportivas hombre");
                 } else {
-                    tops.add("Camiseta técnica de manga corta ultraligera");
-                    bottoms.add("Pantalón corto deportivo ligero");
-                    shoes.add("Zapatillas deportivas transpirables");
-                    accessories.add("Gorra o visera deportiva");
+                    tops.add("Camiseta técnica ligera");
+                    bottoms.add("Pantalón corto deportivo");
+                    shoes.add("Zapatillas deportivas");
                 }
                 break;
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Blusa sin mangas de tejidos naturales");
-                    bottoms.add("Falda ligera, vestido o pantalón de lino");
-                    shoes.add("Sandalias elegantes");
-                    accessories.add("Abanico pequeño");
+                    tops.add("Blusa sin mangas mujer");
+                    bottoms.add("Pantalón de lino");
+                    shoes.add("Zapatos formales ligeros mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Camisa de manga corta o de lino");
-                    bottoms.add("Pantalón ligero de lino o algodón");
-                    shoes.add("Zapatos ligeros sin calcetines o con invisibles");
+                    tops.add("Camisa de manga corta formal hombre");
+                    bottoms.add("Pantalón de lino");
+                    shoes.add("Zapatos formales ligeros hombre");
                 } else {
-                    tops.add("Camisa de lino o algodón fino");
-                    bottoms.add("Pantalón ligero de lino o algodón");
-                    shoes.add("Zapatos ligeros sin calcetines o con calcetines invisibles");
+                    tops.add("Camisa de lino");
+                    bottoms.add("Pantalón de lino");
+                    shoes.add("Zapatos formales ligeros");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima con lluvia
     private void addRainyDayItems(OutfitRecommendation.Style style,
                                   List<String> outerwear,
                                   List<String> accessories,
@@ -474,45 +459,45 @@ public class OutfitService {
         switch (style) {
             case CASUAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    outerwear.add("Impermeable o trench");
-                    if (!shoes.contains("Botas de agua")) {
-                        shoes.clear();
-                        shoes.add("Botas de agua o botines impermeables");
-                    }
+                    outerwear.add("Impermeable mujer");
+                    shoes.clear();
+                    shoes.add("Botas impermeables mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    outerwear.add("Impermeable o chubasquero");
-                    if (!shoes.contains("Botas impermeables")) {
-                        shoes.clear();
-                        shoes.add("Botas impermeables o zapatillas resistentes al agua");
-                    }
+                    outerwear.add("Impermeable hombre");
+                    shoes.clear();
+                    shoes.add("Botas impermeables hombre");
                 } else {
-                    outerwear.add("Impermeable o chubasquero");
-                    if (!shoes.contains("Botas impermeables")) {
-                        shoes.clear();
-                        shoes.add("Botas impermeables");
-                    }
+                    outerwear.add("Impermeable");
+                    shoes.clear();
+                    shoes.add("Botas impermeables");
                 }
                 break;
 
             case SPORTY:
                 outerwear.add("Chaqueta impermeable deportiva");
-                if (!shoes.contains("Zapatillas impermeables")) {
+
+                if (gender == UserPreferences.Gender.FEMALE) {
+                    shoes.clear();
+                    shoes.add("Zapatillas impermeables mujer");
+                } else if (gender == UserPreferences.Gender.MALE) {
+                    shoes.clear();
+                    shoes.add("Zapatillas impermeables hombre");
+                } else {
                     shoes.clear();
                     shoes.add("Zapatillas impermeables");
-                }
-                if (gender == UserPreferences.Gender.FEMALE) {
-                    accessories.add("Gorra impermeable");
                 }
                 break;
 
             case FORMAL:
-                if (gender == UserPreferences.Gender.FEMALE) {
-                    outerwear.add("Gabardina o trench elegante");
-                } else {
-                    outerwear.add("Gabardina");
-                }
+                outerwear.add("Gabardina");
 
-                if (!shoes.contains("Zapatos impermeables")) {
+                if (gender == UserPreferences.Gender.FEMALE) {
+                    shoes.clear();
+                    shoes.add("Zapatos impermeables mujer");
+                } else if (gender == UserPreferences.Gender.MALE) {
+                    shoes.clear();
+                    shoes.add("Zapatos impermeables hombre");
+                } else {
                     shoes.clear();
                     shoes.add("Zapatos impermeables");
                 }
@@ -520,6 +505,7 @@ public class OutfitService {
         }
     }
 
+    // Método que genera un outfit para clima con nieve
     private void addSnowyDayItems(OutfitRecommendation.Style style,
                                   List<String> outerwear,
                                   List<String> accessories,
@@ -530,50 +516,50 @@ public class OutfitService {
         accessories.add("Bufanda gruesa");
 
         if (gender == UserPreferences.Gender.FEMALE) {
-            accessories.add("Orejeras");
+            shoes.clear();
+            shoes.add("Botas de nieve mujer");
+        } else if (gender == UserPreferences.Gender.MALE) {
+            shoes.clear();
+            shoes.add("Botas de nieve hombre");
+        } else {
+            shoes.clear();
+            shoes.add("Botas de nieve");
         }
 
         switch (style) {
             case CASUAL:
             case SPORTY:
-                if (!shoes.contains("Botas de nieve")) {
-                    shoes.clear();
-                    shoes.add("Botas de nieve");
-                }
-
-                if (gender == UserPreferences.Gender.FEMALE && style == OutfitRecommendation.Style.CASUAL) {
-                    outerwear.add("Abrigo largo de plumas");
+                if (gender == UserPreferences.Gender.FEMALE) {
+                    outerwear.add("Abrigo térmico mujer");
+                } else if (gender == UserPreferences.Gender.MALE) {
+                    outerwear.add("Abrigo térmico hombre");
                 } else {
-                    outerwear.add("Abrigo con aislante térmico");
+                    outerwear.add("Abrigo térmico");
                 }
                 break;
 
             case FORMAL:
-                if (!shoes.contains("Botas de vestir impermeables")) {
-                    shoes.clear();
-                    shoes.add("Botas de vestir impermeables");
-                }
-
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    outerwear.add("Abrigo largo de lana con forro");
+                    outerwear.add("Abrigo de lana mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    outerwear.add("Abrigo de lana con forro");
+                    outerwear.add("Abrigo de lana hombre");
                 } else {
-                    outerwear.add("Abrigo de lana con forro");
+                    outerwear.add("Abrigo de lana");
                 }
                 break;
         }
     }
 
+    // Método que genera un outfit para clima con viento
     private void addWindyDayItems(OutfitRecommendation.Style style, List<String> accessories, UserPreferences.Gender gender) {
         if (style == OutfitRecommendation.Style.CASUAL || style == OutfitRecommendation.Style.FORMAL) {
-            accessories.add("Bufanda para protección contra el viento");
+            accessories.add("Bufanda");
 
             if (gender == UserPreferences.Gender.FEMALE && style == OutfitRecommendation.Style.CASUAL) {
-                accessories.add("Pashmina o fular");
+                accessories.add("Pashmina");
             }
         } else {
-            accessories.add("Bandana o braga de cuello");
+            accessories.add("Braga de cuello");
         }
     }
 
@@ -583,16 +569,15 @@ public class OutfitService {
      * En climas cálidos, alta humedad = más calor
      */
     private double adjustTemperatureByHumidity(double temperature, int humidity) {
-        // Para temperaturas frías (< 15°C), alta humedad hace sentir más frío
+
         if (temperature < 15.0) {
             if (humidity >= HIGH_HUMIDITY) {
                 return temperature - 2.0; // Se siente 2 grados más frío
             } else if (humidity <= LOW_HUMIDITY) {
                 return temperature + 1.0; // Se siente 1 grado más cálido
             }
-        }
-        // Para temperaturas cálidas (> 22°C), alta humedad hace sentir más calor
-        else if (temperature > 22.0) {
+        } else if (temperature > 22.0) {
+
             if (humidity >= HIGH_HUMIDITY) {
                 return temperature + 3.0; // Se siente 3 grados más caluroso
             } else if (humidity <= LOW_HUMIDITY) {
@@ -604,10 +589,10 @@ public class OutfitService {
 
     private void addHighHumidityItems(double adjustedTemperature, List<String> accessories) {
         if (adjustedTemperature <= COLD) {
-            // Para clima frío y húmedo, añadir capas impermeables
+            // Para clima frío y húmedo, se añaden capas impermeables
             accessories.add("Ropa interior térmica");
         } else if (adjustedTemperature >= HOT) {
-            // Para clima caluroso y húmedo, añadir ropa transpirable
+            // Para clima caluroso y húmedo, se añade ropa transpirable
             accessories.add("Ropa de tejidos transpirables");
         }
     }
