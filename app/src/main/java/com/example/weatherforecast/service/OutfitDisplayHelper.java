@@ -61,25 +61,40 @@ public class OutfitDisplayHelper {
             return;
         }
 
-        // Para simplificar, mostramos solo el primer elemento de cada categoría
-        String item = items.get(0);
-        ImageView itemImageView = new ImageView(context);
+        // Iterar sobre todos los elementos de la lista
+        for (String item : items) {
+            ImageView itemImageView = new ImageView(context);
 
-        // Configuramos parámetros del ImageView
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.gravity = Gravity.CENTER;
-        itemImageView.setLayoutParams(params);
+            // Configuramos parámetros del ImageView
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    dpToPx(100),  // Ancho fijo
+                    dpToPx(100)   // Alto fijo
+            );
 
-        // Obtenemos la imagen según el tipo de prenda
-        int imageResource = getResourceForItem(item, type);
-        itemImageView.setImageResource(imageResource);
-        itemImageView.setContentDescription(item);
+            params.gravity = Gravity.CENTER;
 
-        // Añadimos la imagen al contenedor
-        container.addView(itemImageView);
+            if (type == ItemType.ACCESSORY) {
+                params.setMargins(dpToPx(15), 0, dpToPx(15), 0); // Márgenes grandes para accesorios
+            } else {
+                params.setMargins(dpToPx(4), 0, dpToPx(4), 0); // Márgenes normales para el resto
+            }
+
+            itemImageView.setLayoutParams(params);
+
+            // Obtenemos la imagen según el tipo de prenda
+            int imageResource = getResourceForItem(item, type);
+            itemImageView.setImageResource(imageResource);
+            itemImageView.setContentDescription(item);
+
+            // Añadimos la imagen al contenedor
+            container.addView(itemImageView);
+        }
+    }
+
+    // Método para convertir dp a píxeles
+    private int dpToPx(int dp) {
+        float density = context.getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private int getResourceForItem(String itemDescription, ItemType type) {

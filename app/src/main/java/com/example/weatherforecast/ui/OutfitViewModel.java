@@ -80,7 +80,7 @@ public class OutfitViewModel extends ViewModel {
         outfitRecommendation.setValue(customizedOutfit);
     }
 
-    // En OutfitViewModel.java - añadir método para cargar outfit guardado
+    // Método para cargar outfit guardado
     public boolean loadSavedOutfit(Context context) {
 
         OutfitRecommendation savedOutfit = preferencesRepository.getSavedOutfit(context);

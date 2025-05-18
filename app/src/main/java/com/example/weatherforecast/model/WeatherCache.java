@@ -96,7 +96,6 @@ public class WeatherCache {
     public String getLastCity() {
         return preferences.getString(KEY_LAST_CITY, null);
     }
-
     public long getLastUpdateTime() {
         return preferences.getLong(KEY_LAST_UPDATE, 0);
     }
@@ -108,4 +107,5 @@ public class WeatherCache {
 
         return (now - lastUpdate) < maxAgeMillis;
     }
+
 }

@@ -3,6 +3,9 @@ package com.example.weatherforecast.dto;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
+/**
+ * Clase que representa la respuesta de la API OpenWeather
+ */
 public class WeatherResponse {
     @SerializedName("name")
     private String cityName;

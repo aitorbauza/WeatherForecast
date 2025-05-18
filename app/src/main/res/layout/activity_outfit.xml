@@ -289,15 +289,8 @@
                         android:layout_height="wrap_content"
                         android:text="Outfit Recomendado"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvOutfitRecommendation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="4dp"
-                        tools:text="Superior: Camiseta de algodón\nInferior: Jeans\nCalzado: Zapatillas casuales\nAbrigo: -\nAccesorios: Gafas de sol" />
+                        android:textStyle="bold"
+                        android:textAlignment="center" />
 
                     <LinearLayout
                         android:id="@+id/outfitImagesContainer"

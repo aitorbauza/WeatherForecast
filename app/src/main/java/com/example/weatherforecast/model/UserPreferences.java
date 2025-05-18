@@ -10,31 +10,25 @@ public class UserPreferences {
     private Tolerance coldTolerance;
     private Tolerance heatTolerance;
 
-    // Enumeración para el género
+    // Enum para el género
     public enum Gender {
         MALE, FEMALE, OTHER
     }
 
-    // Enumeración para niveles de tolerancia
+    // Enum para niveles de tolerancia
     public enum Tolerance {
         LOW, NORMAL, HIGH
     }
 
-    /**
-     * Constructor por defecto que establece los valores predeterminados.
-     */
     public UserPreferences() {
         // Valores predeterminados
-        this.name = "";
-        this.surname = "";
+        this.name = "User";
+        this.surname = "1234";
         this.gender = Gender.OTHER;
         this.coldTolerance = Tolerance.NORMAL;
         this.heatTolerance = Tolerance.NORMAL;
     }
 
-    /**
-     * Constructor completo.
-     */
     public UserPreferences(String name, String surname, Gender gender,
                            Tolerance coldTolerance, Tolerance heatTolerance) {
         this.name = name;
@@ -44,50 +38,40 @@ public class UserPreferences {
         this.heatTolerance = heatTolerance;
     }
 
-    // Getters and Setters
+    // Getters y Setters
     public String getName() {
         return name;
+    }
+    public String getSurname() {
+        return surname;
+    }
+    public Gender getGender() {
+        return gender;
+    }
+    public Tolerance getColdTolerance() {
+        return coldTolerance;
+    }
+    public Tolerance getHeatTolerance() {
+        return heatTolerance;
     }
 
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getSurname() {
-        return surname;
-    }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
-    public Gender getGender() {
-        return gender;
-    }
-
     public void setGender(Gender gender) {
         this.gender = gender;
     }
-
-    public Tolerance getColdTolerance() {
-        return coldTolerance;
-    }
-
     public void setColdTolerance(Tolerance coldTolerance) {
         this.coldTolerance = coldTolerance;
     }
-
-    public Tolerance getHeatTolerance() {
-        return heatTolerance;
-    }
-
     public void setHeatTolerance(Tolerance heatTolerance) {
         this.heatTolerance = heatTolerance;
     }
 
-    /**
-     * Crea una copia de las preferencias actuales.
-     */
+    // Método para clonar la instancia
     public UserPreferences copy() {
         return new UserPreferences(
                 this.name,
@@ -98,20 +82,8 @@ public class UserPreferences {
         );
     }
 
-    /**
-     * Restablece las preferencias a los valores predeterminados.
-     */
-    public void reset() {
-        this.name = "";
-        this.surname = "";
-        this.gender = Gender.OTHER;
-        this.coldTolerance = Tolerance.NORMAL;
-        this.heatTolerance = Tolerance.NORMAL;
-    }
 
-    /**
-     * Compara esta instancia con otra para determinar si son iguales.
-     */
+    // Método para comparar instancias
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -126,6 +98,7 @@ public class UserPreferences {
         return heatTolerance == that.heatTolerance;
     }
 
+    // Método para obtener el hash
     @Override
     public int hashCode() {
         int result = name.hashCode();

@@ -12,14 +12,14 @@ import java.util.Map;
  */
 public class OutfitImageMapper {
 
-    // Mapas para cada tipo de prenda
+    // Maps para cada tipo de prenda
     private final Map<String, Integer> topItemsMap = new HashMap<>();
     private final Map<String, Integer> bottomItemsMap = new HashMap<>();
     private final Map<String, Integer> footwearMap = new HashMap<>();
     private final Map<String, Integer> outerwearMap = new HashMap<>();
     private final Map<String, Integer> accessoriesMap = new HashMap<>();
 
-    // Constructor que inicializa todos los mapas
+    // Constructor que inicializa todos los maps
     public OutfitImageMapper() {
         initTopItemsMap();
         initBottomItemsMap();
@@ -28,6 +28,7 @@ public class OutfitImageMapper {
         initAccessoriesMap();
     }
 
+    //Prendas defaults
     @DrawableRes
     public int getTopItemResource(String description) {
         return topItemsMap.getOrDefault(description.toLowerCase(), R.drawable.top_mujer);
@@ -53,7 +54,7 @@ public class OutfitImageMapper {
         return accessoriesMap.getOrDefault(description.toLowerCase(), R.drawable.gorra_con_visera);
     }
 
-    // Inicializa el mapa de prendas superiores
+    // Mapeo de prendas superiores
     private void initTopItemsMap() {
         // Prendas casuales
         topItemsMap.put("camiseta de algodón", R.drawable.camiseta_algodon_hombre);
@@ -105,7 +106,7 @@ public class OutfitImageMapper {
         topItemsMap.put("camisa de lino", R.drawable.camisa_lino);
     }
 
-    // Inicializa el mapa de prendas inferiores
+    // Mapeo de prendas inferiores
     private void initBottomItemsMap() {
         // Pantalones casuales
         bottomItemsMap.put("vaqueros", R.drawable.vaquero);
@@ -124,7 +125,7 @@ public class OutfitImageMapper {
         bottomItemsMap.put("pantalón de lino", R.drawable.pantalon_lino);
     }
 
-    // Inicializa el mapa de calzado
+    // Mapeo de calzado
     private void initFootwearMap() {
         // Calzado casual
         footwearMap.put("zapatillas casuales", R.drawable.zapatillas_casuales_mujer);
@@ -162,7 +163,7 @@ public class OutfitImageMapper {
         footwearMap.put("zapatos formales hombre", R.drawable.zapatos_formales_hombre);
     }
 
-    // Inicializa el mapa de prendas exteriores
+    // Mapeo de prendas exteriores
     private void initOuterwearMap() {
         // Chaquetas
         outerwearMap.put("chaqueta", R.drawable.chaqueta_hombre);
@@ -199,7 +200,7 @@ public class OutfitImageMapper {
         outerwearMap.put("gabardina", R.drawable.gabardina_hombre);
     }
 
-    // Inicializa el mapa de accesorios
+    // Mapeo de accesorios
     private void initAccessoriesMap() {
         // Sombreros y gorros
         accessoriesMap.put("gorro de lana", R.drawable.gorro_lana);
@@ -222,4 +223,5 @@ public class OutfitImageMapper {
         accessoriesMap.put("ropa interior térmica", R.drawable.ropa_interior_termica);
         accessoriesMap.put("ropa de tejidos transpirables", R.drawable.ropa_tejido_transpirable);
     }
+
 }

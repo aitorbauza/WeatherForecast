@@ -141,7 +141,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         radioFormal = findViewById(R.id.radioFormal);
         btnLoadOutfit = findViewById(R.id.btnLoadOutfit);
         cardOutfit = findViewById(R.id.cardOutfit);
-        tvOutfitRecommendation = findViewById(R.id.tvOutfitRecommendation);
+//        tvOutfitRecommendation = findViewById(R.id.tvOutfitRecommendation);
         progressBar = findViewById(R.id.progressBar);
 
         // Botón para cambiar ubicación
@@ -180,9 +180,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         OutfitViewModelFactory factory = new OutfitViewModelFactory(this);
         outfitViewModel = new ViewModelProvider(this, factory).get(OutfitViewModel.class);
 
-        outfitViewModel.getOutfitRecommendation().observe(this, recommendation -> {
-            showOutfitRecommendation(recommendation);
-        });
+        outfitViewModel.getOutfitRecommendation().observe(this, this::showOutfitRecommendation);
 
         outfitViewModel.isLoading().observe(this, isLoading -> {
             progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
@@ -199,15 +197,15 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false); // Oculta el título predeterminado
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // Configurar logo de la toolbar
+        // Toolbar
         Glide.with(this)
-                .load(R.drawable.logo) // Este recurso debe ser añadido
+                .load(R.drawable.logo)
                 .into(toolbarLogo);
 
-        // Configurar botón de ajustes
+        // Botón de ajustes
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(OutfitActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -325,9 +323,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
         cardOutfit.setVisibility(View.VISIBLE);
-
-        // Mostramos el texto de la recomendación (opcional, puedes quitar esto si solo quieres imágenes)
-        tvOutfitRecommendation.setText(recommendation.getFormattedOutfit());
 
         // Mostramos las imágenes del outfit
         outfitDisplayHelper.displayOutfitWithImages(outfitImagesContainer, recommendation);

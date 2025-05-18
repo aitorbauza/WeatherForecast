@@ -2,6 +2,9 @@ package com.example.weatherforecast.model;
 
 import java.util.List;
 
+/**
+ * Clase que representa una recomendación de outfit
+ */
 public class OutfitRecommendation {
     public enum Style {
         CASUAL,
@@ -30,51 +33,20 @@ public class OutfitRecommendation {
     public List<String> getTopItems() {
         return topItems;
     }
-
     public List<String> getBottomItems() {
         return bottomItems;
     }
-
     public List<String> getFootwear() {
         return footwear;
     }
-
     public List<String> getOuterWear() {
         return outerWear;
     }
-
     public List<String> getAccessories() {
         return accessories;
     }
-
     public Style getStyle() {
         return style;
     }
 
-    // Método para obtener todas las prendas en un formato legible
-    public String getFormattedOutfit() {
-        StringBuilder outfit = new StringBuilder();
-
-        if (!topItems.isEmpty()) {
-            outfit.append("Superior: ").append(String.join(", ", topItems)).append("\n");
-        }
-
-        if (!bottomItems.isEmpty()) {
-            outfit.append("Inferior: ").append(String.join(", ", bottomItems)).append("\n");
-        }
-
-        if (!footwear.isEmpty()) {
-            outfit.append("Calzado: ").append(String.join(", ", footwear)).append("\n");
-        }
-
-        if (!outerWear.isEmpty()) {
-            outfit.append("Abrigo: ").append(String.join(", ", outerWear)).append("\n");
-        }
-
-        if (!accessories.isEmpty()) {
-            outfit.append("Accesorios: ").append(String.join(", ", accessories));
-        }
-
-        return outfit.toString();
-    }
 }

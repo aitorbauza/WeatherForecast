@@ -3,7 +3,7 @@ package com.example.weatherforecast.model;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Model class representing a geographic point along a route with weather information
+ * Clase que representa un punto de la ruta
  */
 public class RoutePoint {
     private LatLng latLng;
@@ -19,51 +19,43 @@ public class RoutePoint {
         this.locationName = locationName;
     }
 
+    //Getters y Setters
     public LatLng getLatLng() {
         return latLng;
+    }
+    public int getPercentageAlongRoute() {
+        return percentageAlongRoute;
+    }
+    public String getLocationName() {
+        return locationName;
+    }
+    public double getTemperature() {
+        return temperature;
+    }
+    public String getWeatherCondition() {
+        return weatherCondition;
+    }
+    public String getWeatherIcon() {
+        return weatherIcon;
     }
 
     public void setLatLng(LatLng latLng) {
         this.latLng = latLng;
     }
-
-    public int getPercentageAlongRoute() {
-        return percentageAlongRoute;
-    }
-
     public void setPercentageAlongRoute(int percentageAlongRoute) {
         this.percentageAlongRoute = percentageAlongRoute;
     }
-
-    public String getLocationName() {
-        return locationName;
-    }
-
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
     public void setTemperature(double temperature) {
         this.temperature = temperature;
     }
-
-    public String getWeatherCondition() {
-        return weatherCondition;
-    }
-
     public void setWeatherCondition(String weatherCondition) {
         this.weatherCondition = weatherCondition;
     }
-
-    public String getWeatherIcon() {
-        return weatherIcon;
-    }
-
     public void setWeatherIcon(String weatherIcon) {
         this.weatherIcon = weatherIcon;
     }
+
 }
