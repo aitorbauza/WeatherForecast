@@ -9,8 +9,8 @@ import java.util.List;
 
 
 /**
- * Clase encargada de generar una recomendación de outfit basado en el clima actual
- * , el estilo seleccionado y las preferencias del usuario
+ * Clase encargada de generar una recomendación de outfit basado en el clima actual,
+ * el estilo seleccionado y las preferencias del usuario
  */
 public class OutfitService {
 
@@ -169,19 +169,19 @@ public class OutfitService {
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa de manga larga");
                     tops.add("Jersey formal mujer");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales mujer");
                     outerwear.add("Abrigo de lana mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de manga larga");
                     tops.add("Jersey formal hombre");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales hombre");
                     outerwear.add("Abrigo de lana hombre");
                 } else {
                     tops.add("Camisa de manga larga");
                     tops.add("Jersey formal");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales");
                     outerwear.add("Abrigo de lana");
                 }
@@ -239,19 +239,19 @@ public class OutfitService {
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa");
                     tops.add("Jersey fino mujer");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales mujer");
                     outerwear.add("Blazer mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de vestir");
                     tops.add("Jersey fino hombre");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales hombre");
                     outerwear.add("Blazer hombre");
                 } else {
                     tops.add("Camisa de vestir");
                     tops.add("Jersey fino");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales");
                     outerwear.add("Blazer");
                 }
@@ -310,12 +310,12 @@ public class OutfitService {
                     outerwear.add("Blazer mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa elegante hombre");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales hombre");
                     outerwear.add("Blazer hombre");
                 } else {
                     tops.add("Camisa elegante");
-                    bottoms.add("Vaquero");
+                    bottoms.add("Vaqueros");
                     shoes.add("Zapatos formales");
                     outerwear.add("Blazer");
                 }
@@ -587,6 +587,7 @@ public class OutfitService {
         return temperature; // Sin ajuste para casos intermedios
     }
 
+    // Método que genera un outfit para clima con alta humedad
     private void addHighHumidityItems(double adjustedTemperature, List<String> accessories) {
         if (adjustedTemperature <= COLD) {
             // Para clima frío y húmedo, se añaden capas impermeables
@@ -596,4 +597,5 @@ public class OutfitService {
             accessories.add("Ropa de tejidos transpirables");
         }
     }
+
 }

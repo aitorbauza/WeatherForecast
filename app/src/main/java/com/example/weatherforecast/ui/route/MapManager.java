@@ -18,14 +18,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-// Importar estas clases para las restricciones
 import com.google.android.gms.maps.model.MapStyleOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Responsible for all map-related operations
+ * Clase encargada de manejar el mapa
  */
 public class MapManager{
 
@@ -70,7 +69,7 @@ public class MapManager{
                 }
             }
         } catch (Exception e) {
-            // Error cargando el estilo, ignorar
+
         }
 
         // Limitar el área de visualización a España
@@ -87,45 +86,38 @@ public class MapManager{
 
         // Establecer límites de caching para evitar consumo excesivo de memoria
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         googleMap.setMyLocationEnabled(false); // Desactivar ubicación actual para ahorrar recursos
     }
 
+    // Método que dibuja la ruta en el mapa
     public void drawRoute(List<LatLng> routePoints) {
         if (googleMap == null) return;
 
         // Limitar puntos para mejor rendimiento
-        List<LatLng> optimizedPoints = simplifyRoutePoints(routePoints, 50); // Reducido a 50 puntos máximo
-
+        List<LatLng> optimizedPoints = simplifyRoutePoints(routePoints, 49);
         // Filtrar puntos fuera de España para evitar cálculos innecesarios
         optimizedPoints = filterPointsWithinSpain(optimizedPoints);
 
         // Usar Handler para no bloquear el hilo principal
         List<LatLng> finalOptimizedPoints = optimizedPoints;
         new Handler(Looper.getMainLooper()).post(() -> {
-            // Clear previous map data
+
             googleMap.clear();
 
-            // Draw route polyline
+            // Dibujar la ruta
             PolylineOptions polylineOptions = new PolylineOptions()
                     .addAll(finalOptimizedPoints)
                     .color(context != null ?
                             context.getResources().getColor(R.color.colorPrimary) :
-                            0xFF3F51B5) // Default primary color if context is null
+                            0xFF3F51B5)
                     .width(10);
             googleMap.addPolyline(polylineOptions);
         });
     }
 
-    // Nuevo método para filtrar puntos solo dentro de España
+    // Método para filtrar puntos solo dentro de España
     private List<LatLng> filterPointsWithinSpain(List<LatLng> points) {
         List<LatLng> filteredPoints = new ArrayList<>();
 
@@ -135,7 +127,6 @@ public class MapManager{
             }
         }
 
-        // Si no quedan puntos después del filtrado, devolver la lista original
         return filteredPoints.isEmpty() ? points : filteredPoints;
     }
 
@@ -164,6 +155,7 @@ public class MapManager{
         return result;
     }
 
+    // Método para ajustar la cámara para mostrar la ruta
     public void adjustCameraToRoute(List<LatLng> routePoints) {
         if (googleMap == null || routePoints.isEmpty()) return;
 
@@ -174,7 +166,6 @@ public class MapManager{
             // Si todos los puntos fueron filtrados, usar los originales
             if (filteredPoints.isEmpty()) filteredPoints = routePoints;
 
-            // Build bounds for camera
             LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
             for (LatLng point : filteredPoints) {
                 boundsBuilder.include(point);
@@ -184,19 +175,17 @@ public class MapManager{
             LatLngBounds routeBounds = boundsBuilder.build();
             LatLngBounds constrainedBounds = constrainBoundsToSpain(routeBounds);
 
-            // Apply padding based on display metrics for better visualization
             int padding = context != null ?
                     context.getResources().getDimensionPixelSize(R.dimen.map_padding) : 100;
-            if (padding <= 0) padding = 100; // Fallback padding
+            if (padding <= 0) padding = 100;
 
             // Animar la cámara de forma rápida para evitar bloqueos
             googleMap.animateCamera(
                     CameraUpdateFactory.newLatLngBounds(constrainedBounds, padding),
-                    500, // Duración corta de la animación (300ms)
+                    400,
                     null
             );
         } catch (Exception e) {
-            // Fallback to moving camera to first point in Spain or center of Spain
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40.4637, -3.7492), DEFAULT_ZOOM_LEVEL));
         }
     }
@@ -220,33 +209,32 @@ public class MapManager{
         return new LatLngBounds(southwest, northeast);
     }
 
+    // Método para actualizar los marcadores de clima
     public void updateWeatherMarkers(List<RoutePoint> points) {
         if (googleMap == null) return;
 
-        // Limitar el número de marcadores para mejorar rendimiento
         List<RoutePoint> limitedPoints = new ArrayList<>();
-        int maxMarkers = 4; // Limitar a 5 marcadores como máximo
+        int maxMarkers = 5; // Max 5
 
         if (points.size() <= maxMarkers) {
             limitedPoints = points;
         } else {
-            // Estrategia: tomar el primero, último y algunos intermedios
             limitedPoints.add(points.get(0)); // Origen
 
-            // Algunos puntos intermedios
+            // Puntos intermedios
             for (int i = 1; i < points.size() - 1; i += points.size() / maxMarkers) {
                 if (limitedPoints.size() < maxMarkers - 1) {
                     limitedPoints.add(points.get(i));
                 }
             }
 
-            // Último punto (destino)
+            // Destino
             if (points.size() > 1) {
                 limitedPoints.add(points.get(points.size() - 1));
             }
         }
 
-        // Update markers on map
+        // Limpiar marcadores existentes
         for (RoutePoint point : limitedPoints) {
             if (point.getLocationName() != null && isPointInSpain(point.getLatLng())) {
                 addWeatherMarker(point);
@@ -254,16 +242,15 @@ public class MapManager{
         }
     }
 
+    // Método para agregar un marcador de clima
     private void addWeatherMarker(RoutePoint point) {
         if (googleMap == null || point.getLocationName() == null) return;
 
-        // Create marker for this weather point
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(point.getLatLng())
                 .title(point.getLocationName())
                 .snippet(String.format("%.1f°C - %s", point.getTemperature(), point.getWeatherCondition()));
 
-        // Choose color based on temperature
         if (point.getTemperature() > 25) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         } else if (point.getTemperature() > 15) {
@@ -274,4 +261,5 @@ public class MapManager{
 
         googleMap.addMarker(markerOptions);
     }
+
 }

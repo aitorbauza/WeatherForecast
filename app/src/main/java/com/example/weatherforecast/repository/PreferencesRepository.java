@@ -20,16 +20,11 @@ public class PreferencesRepository {
 
     private final SharedPreferences preferences;
 
-    /**
-     * Constructor que inicializa las SharedPreferences.
-     */
     public PreferencesRepository(Context context) {
         this.preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    /**
-     * Guarda las preferencias del usuario.
-     */
+    // Método que guarda las preferencias del usuario
     public void saveUserPreferences(UserPreferences userPreferences) {
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -42,9 +37,7 @@ public class PreferencesRepository {
         editor.apply();
     }
 
-    /**
-     * Recupera las preferencias del usuario.
-     */
+    // Las recupera
     public UserPreferences getUserPreferences() {
         String name = preferences.getString(KEY_NAME, "");
         String surname = preferences.getString(KEY_SURNAME, "");
@@ -79,20 +72,13 @@ public class PreferencesRepository {
         return new UserPreferences(name, surname, gender, coldTolerance, heatTolerance);
     }
 
-    /**
-     * Restablece las preferencias a los valores predeterminados.
-     */
-    public void resetUserPreferences() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
-    }
 
-    // En PreferencesRepository.java - añadir método para obtener outfit guardado
-    public OutfitRecommendation getSavedOutfit(Context context) {
+        // Método para obtener el outfit guardado
+        public OutfitRecommendation getSavedOutfit(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
         String outfitJson = prefs.getString("saved_outfit", null);
 
+        // Si no hay un outfit guardado, devuelve null
         if (outfitJson != null && !outfitJson.isEmpty()) {
             try {
                 Gson gson = new Gson();
@@ -104,7 +90,7 @@ public class PreferencesRepository {
         return null;
     }
 
-    // En PreferencesRepository.java - añadir método para guardar outfit
+    // Método para guardar outfit
     public void saveOutfit(OutfitRecommendation outfit, Context context) {
         SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();

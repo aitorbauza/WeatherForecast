@@ -4,6 +4,9 @@ import com.example.weatherforecast.dto.WeatherResponse;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.util.WeatherIconMapper;
 
+/**
+ * Clase encargada de procesar los datos del clima,
+ */
 public class WeatherDataProcessor {
     private final WeatherIconMapper iconMapper;
 
@@ -11,6 +14,7 @@ public class WeatherDataProcessor {
         this.iconMapper = iconMapper;
     }
 
+    // Método que procesa los datos del clima
     public CurrentWeather processCurrentWeather(WeatherResponse data, WeatherTranslator translator) {
         String weatherCondition = "";
         String iconCode = "";
@@ -34,6 +38,7 @@ public class WeatherDataProcessor {
         );
     }
 
+    // Método que genera un resumen del clima
     private String generateWeatherSummary(WeatherResponse data) {
         if (data.getWeather() == null || data.getWeather().isEmpty()) {
             return "Sin información disponible";
@@ -46,7 +51,7 @@ public class WeatherDataProcessor {
 
         StringBuilder summary = new StringBuilder();
 
-        // Generar un resumen basado en las condiciones climáticas
+        // Resumen basado en las condiciones climáticas
         switch (mainCondition.toLowerCase()) {
             case "clear":
                 summary.append("Se prevé un día soleado");
@@ -74,7 +79,7 @@ public class WeatherDataProcessor {
                 summary.append("Se prevén condiciones variables");
         }
 
-        // Añadir información sobre la temperatura
+        // Info extra sobre la temperatura
         if (maxTemp - minTemp > 8) {
             summary.append(" con cambios considerables de temperatura");
         } else if (temp > 30) {

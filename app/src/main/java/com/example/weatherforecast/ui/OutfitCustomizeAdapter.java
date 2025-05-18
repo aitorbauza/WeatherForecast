@@ -129,8 +129,10 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
             accessories.addAll(Arrays.asList(accessoriesItem.split(", ")));
         }
 
-        return new OutfitRecommendation(
+        OutfitRecommendation customized = new OutfitRecommendation(
                 tops, bottoms, footwear, outerwear, accessories, originalOutfit.getStyle());
+
+        return customized;
     }
 
     // Inicializar las alternativas para cada categoría

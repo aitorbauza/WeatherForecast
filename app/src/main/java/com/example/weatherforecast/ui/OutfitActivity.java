@@ -34,6 +34,7 @@ import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.model.UserPreferences;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -83,6 +84,8 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     private OutfitDisplayHelper outfitDisplayHelper;
     private LinearLayout outfitImagesContainer;
+
+    private Button btnViewRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +144,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         radioFormal = findViewById(R.id.radioFormal);
         btnLoadOutfit = findViewById(R.id.btnLoadOutfit);
         cardOutfit = findViewById(R.id.cardOutfit);
-//        tvOutfitRecommendation = findViewById(R.id.tvOutfitRecommendation);
         progressBar = findViewById(R.id.progressBar);
 
         // Botón para cambiar ubicación
@@ -160,6 +162,9 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
         outfitImagesContainer = findViewById(R.id.outfitImagesContainer);
         outfitDisplayHelper = new OutfitDisplayHelper(this);
+
+        btnViewRating = findViewById(R.id.btnViewRating);
+        btnViewRating.setVisibility(View.GONE);
 
         navigationManager = new NavigationManager(
                 this,
@@ -238,9 +243,12 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             showCustomizeDialog();
         });
 
-        // Listener para el botón de guardar
         btnSaveOutfit.setOnClickListener(v -> {
             saveCustomizedOutfit();
+        });
+
+        btnViewRating.setOnClickListener(v -> {
+            showRatingDialog();
         });
     }
 
@@ -326,6 +334,50 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
         // Mostramos las imágenes del outfit
         outfitDisplayHelper.displayOutfitWithImages(outfitImagesContainer, recommendation);
+
+        btnViewRating.setVisibility(View.VISIBLE);
+    }
+
+    // Método para mostrar el diálogo de calificación
+    private void showRatingDialog() {
+        // Obtener el outfit actual
+        OutfitRecommendation currentOutfit = outfitViewModel.getOutfitRecommendation().getValue();
+        if (currentOutfit == null) return;
+
+        // Calcular la puntuación de confort
+        outfitViewModel.calculateComfortRating(currentOutfit);
+
+        // Crear el diálogo
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_outfit_rating, null);
+        builder.setView(dialogView);
+
+        // Configurar vistas del diálogo
+        TextView tvRatingMessage = dialogView.findViewById(R.id.tvRatingMessage);
+        ProgressBar progressComfort = dialogView.findViewById(R.id.progressComfort);
+        LinearLayout outfitRatingImagesContainer = dialogView.findViewById(R.id.outfitRatingImagesContainer);
+        Button btnCloseRating = dialogView.findViewById(R.id.btnCloseRating);
+
+        // Mostrar la puntuación y el mensaje
+        Integer comfortRating = outfitViewModel.getComfortRating().getValue();
+        if (comfortRating != null) {
+            progressComfort.setProgress(comfortRating);
+        }
+
+        String ratingMessage = outfitViewModel.getRatingMessage().getValue();
+        if (ratingMessage != null) {
+            tvRatingMessage.setText(ratingMessage);
+        }
+
+        // Mostrar las imágenes del outfit
+        outfitDisplayHelper.displayOutfitWithImages(outfitRatingImagesContainer, currentOutfit);
+
+        AlertDialog dialog = builder.create();
+
+        // Configurar el botón de cerrar
+        btnCloseRating.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     @Override

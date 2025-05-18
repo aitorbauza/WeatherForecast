@@ -21,16 +21,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Responsible for route calculation and related operations
+ * Clase encargada de calcular la ruta entre dos puntos
  */
 public class RouteManager {
 
-    private static final String MAPS_API_KEY = "AIzaSyBF5Bi-0WWKdREJqpJwdFMOl1bA5y7Xbv8"; // Replace with your Google Maps API key
+    private static final String MAPS_API_KEY = "AIzaSyBF5Bi-0WWKdREJqpJwdFMOl1bA5y7Xbv8"; // Google Maps API key
 
     // Definir los límites de España como constantes
     private static final com.google.maps.model.LatLng SPAIN_NORTHEAST = new com.google.maps.model.LatLng(43.7902, 3.3350);
     private static final com.google.maps.model.LatLng SPAIN_SOUTHWEST = new com.google.maps.model.LatLng(36.0001, -9.3000);
-    private static final String SPAIN_REGION = "es"; // Código de región para España
+    private static final String SPAIN_REGION = "es";
 
     private final ExecutorService executorService;
     private final GeoApiContext geoApiContext;
@@ -45,7 +45,6 @@ public class RouteManager {
         this.context = context;
         this.executorService = Executors.newSingleThreadExecutor();
 
-        // Initialize API context with optimizaciones para España
         this.geoApiContext = new GeoApiContext.Builder()
                 .apiKey(MAPS_API_KEY)
                 .connectTimeout(2, TimeUnit.SECONDS)
@@ -54,6 +53,7 @@ public class RouteManager {
                 .build();
     }
 
+    // Método para calcular la ruta entre dos puntos
     public void calculateRoute(String origin, String destination, RouteCalculationCallback callback) {
         executorService.execute(() -> {
             try {
@@ -72,7 +72,7 @@ public class RouteManager {
                         .destination(destination)
                         .region(SPAIN_REGION) // Limitar a España
                         .alternatives(false) // Desactivar rutas alternativas para mejor rendimiento
-                        .optimizeWaypoints(true) // Optimizar para mejor rendimiento
+                        .optimizeWaypoints(true)
                         .setCallback(new PendingResult.Callback<DirectionsResult>() {
                             @Override
                             public void onResult(DirectionsResult result) {
@@ -110,8 +110,7 @@ public class RouteManager {
 
     // Método para validar que las ubicaciones están en España
     private boolean validateSpainLocation(String origin, String destination) {
-        // Para simplificar, verificamos si los nombres terminan en España o contienen España
-        // Esto es una aproximación básica, podría mejorarse con geocoding real
+
         String lowerOrigin = origin.toLowerCase();
         String lowerDest = destination.toLowerCase();
 
@@ -145,10 +144,8 @@ public class RouteManager {
 
     // Verificar si la ruta calculada está dentro de España
     private boolean isRouteInSpain(DirectionsRoute route) {
-        // Verificar usando el bounding box de la ruta
         Bounds bounds = route.bounds;
 
-        // Crear un rectángulo con los límites de la ruta
         boolean isNortheastInSpain = bounds.northeast.lat <= SPAIN_NORTHEAST.lat &&
                 bounds.northeast.lng <= SPAIN_NORTHEAST.lng;
         boolean isSouthwestInSpain = bounds.southwest.lat >= SPAIN_SOUTHWEST.lat &&
@@ -157,14 +154,13 @@ public class RouteManager {
         return isNortheastInSpain && isSouthwestInSpain;
     }
 
-    // Versión simplificada del procesador de rutas
+    // Método para procesar el resultado de la ruta simplificada
     private void processRouteResultSimplified(DirectionsRoute route, RouteCalculationCallback callback) {
         try {
-            // Simplificar extracción de puntos - limitar cantidad para mejorar rendimiento
             List<LatLng> routePoints = new ArrayList<>();
             List<com.google.maps.model.LatLng> decodedPath = route.overviewPolyline.decodePath();
 
-            // Limitar a máximo 100 puntos para evitar sobrecarga (reducido de 200)
+            // Limitar a máximo 100 puntos para evitar sobrecarga
             int step = Math.max(1, decodedPath.size() / 100);
             for (int i = 0; i < decodedPath.size(); i += step) {
                 com.google.maps.model.LatLng latLng = decodedPath.get(i);
@@ -197,7 +193,6 @@ public class RouteManager {
                 // Apaga el ejecutor de manera controlada
                 executorService.shutdownNow();
             } catch (Exception e) {
-                // Ignora excepciones durante el apagado
             }
         }
 
@@ -205,8 +200,8 @@ public class RouteManager {
             try {
                 geoApiContext.shutdown();
             } catch (Exception e) {
-                // Ignora excepciones durante el apagado
             }
         }
     }
+
 }

@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Clase encargada de procesar los datos de pronóstico del clima.
+ */
 public class ForecastProcessor {
     private final WeatherIconMapper iconMapper;
 
@@ -34,23 +37,22 @@ public class ForecastProcessor {
         Calendar currentCal = Calendar.getInstance();
         int currentHour = currentCal.get(Calendar.HOUR_OF_DAY);
 
+        // Filtrar pronóstico por hora
         try {
-            // Obtener la primera entrada para determinar la fecha base
             ForecastResponse.TimePoint firstPoint = response.getList().get(0);
             Date firstDate = inputFormat.parse(firstPoint.getDateTimeText());
             Calendar firstCal = Calendar.getInstance();
             firstCal.setTime(firstDate);
 
-            // Generar pronóstico por hora interpolando datos
+            // Generar pronóstico por hora
             for (int hour = 0; hour < 24; hour++) {
-                // Calcular la hora para este pronóstico (a partir de la hora actual)
                 Calendar targetCal = (Calendar) currentCal.clone();
                 targetCal.add(Calendar.HOUR_OF_DAY, hour);
 
-                // Encontrar los dos puntos de datos más cercanos para interpolar
                 ForecastResponse.TimePoint before = null;
                 ForecastResponse.TimePoint after = null;
 
+                // Bucle que encuentra los puntos antes y después de la hora actual
                 for (int i = 0; i < response.getList().size() - 1; i++) {
                     ForecastResponse.TimePoint current = response.getList().get(i);
                     ForecastResponse.TimePoint next = response.getList().get(i + 1);
@@ -58,6 +60,7 @@ public class ForecastProcessor {
                     Date currentDate = inputFormat.parse(current.getDateTimeText());
                     Date nextDate = inputFormat.parse(next.getDateTimeText());
 
+                    // Si la hora actual está entre las dos horas de pronóstico, guardar los puntos
                     if (currentDate.getTime() <= targetCal.getTimeInMillis() &&
                             nextDate.getTime() > targetCal.getTimeInMillis()) {
                         before = current;
@@ -66,7 +69,7 @@ public class ForecastProcessor {
                     }
                 }
 
-                // Si no encontramos puntos para interpolar, usar el más cercano
+                // Si no encontramos puntos para interpolar, usamos el más cercano
                 if (before == null || after == null) {
                     ForecastResponse.TimePoint nearest = findNearestTimePoint(response.getList(),
                             targetCal.getTimeInMillis(),
@@ -124,14 +127,15 @@ public class ForecastProcessor {
         return hourlyList;
     }
 
+    // Método para procesar pronóstico diario
     public List<DailyForecast> processDailyForecast(ForecastResponse response) {
-        // Agrupar por día
         Map<String, List<ForecastResponse.TimePoint>> dailyPoints = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
+        // Agrupar puntos por fecha
         for (ForecastResponse.TimePoint point : response.getList()) {
             try {
-                String dateKey = point.getDateTimeText().split(" ")[0]; // Obtener solo la fecha
+                String dateKey = point.getDateTimeText().split(" ")[0];
 
                 if (!dailyPoints.containsKey(dateKey)) {
                     dailyPoints.put(dateKey, new ArrayList<>());
@@ -170,7 +174,7 @@ public class ForecastProcessor {
                     String newDateStr = dateFormat.format(lastCal.getTime());
                     sortedDates.add(newDateStr);
 
-                    // Añadir una lista vacía para este día (usaremos extrapolación después)
+                    // Añadir una lista vacía para este día
                     if (!dailyPoints.containsKey(newDateStr)) {
                         dailyPoints.put(newDateStr, new ArrayList<>());
                     }
@@ -180,6 +184,7 @@ public class ForecastProcessor {
             }
         }
 
+        // Generar pronóstico diario
         for (int i = 0; i < Math.min(7, sortedDates.size()); i++) {
             String dateKey = sortedDates.get(i);
             List<ForecastResponse.TimePoint> points = dailyPoints.get(dateKey);
@@ -187,9 +192,9 @@ public class ForecastProcessor {
             try {
                 Date date = dateFormat.parse(dateKey);
                 calendar.setTime(date);
-                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1; // Ajustar al índice de 0-6
+                int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
 
-                // Para el día actual, mostrar "Hoy" en lugar de la abreviatura
+                // Para el día actual, mostrar "Hoy"
                 String dayText;
                 if (i == 0) {
                     dayText = "Hoy";
@@ -197,7 +202,7 @@ public class ForecastProcessor {
                     dayText = dayAbbreviations[dayOfWeek];
                 }
 
-                // Si no hay puntos de datos para este día (extrapolación), basarse en el día anterior
+                // Si no hay puntos de datos para este día, basarse en el día anterior
                 if (points.isEmpty() && i > 0) {
                     String prevDateKey = sortedDates.get(i - 1);
                     List<ForecastResponse.TimePoint> prevPoints = dailyPoints.get(prevDateKey);
@@ -218,7 +223,7 @@ public class ForecastProcessor {
                         }
 
                         // Añadir pequeña variación aleatoria para simular predicción
-                        double randVariation = (Math.random() * 2) - 1; // Entre -1 y 1
+                        double randVariation = (Math.random() * 2) - 1;
                         maxTemp += randVariation;
                         minTemp += randVariation;
 
@@ -242,6 +247,7 @@ public class ForecastProcessor {
                     String mostCommonIcon = "";
                     Map<String, Integer> iconCounts = new HashMap<>();
 
+                    // Contar el número de veces que aparece cada icono
                     for (ForecastResponse.TimePoint point : points) {
                         maxTemp = Math.max(maxTemp, point.getMain().getMaxTemperature());
                         minTemp = Math.min(minTemp, point.getMain().getMinTemperature());
@@ -271,7 +277,7 @@ public class ForecastProcessor {
 
                     dailyList.add(dailyForecast);
                 } else {
-                    // Si no hay datos y es el primer día (caso poco probable)
+                    // Si no hay datos y es el primer día
                     DailyForecast dailyForecast = new DailyForecast(
                             dayText,
                             20.0, // Temperatura predeterminada
@@ -285,13 +291,14 @@ public class ForecastProcessor {
                 e.printStackTrace();
             }
         }
-
         return dailyList;
     }
 
-    private ForecastResponse.TimePoint findNearestTimePoint(List<ForecastResponse.TimePoint> points,
-                                                            long targetTime,
-                                                            SimpleDateFormat format) {
+    private ForecastResponse.TimePoint findNearestTimePoint(
+            List<ForecastResponse.TimePoint> points,
+            long targetTime,
+            SimpleDateFormat format) {
+
         ForecastResponse.TimePoint nearest = null;
         long minTimeDiff = Long.MAX_VALUE;
 
@@ -308,7 +315,7 @@ public class ForecastProcessor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return nearest;
     }
+
 }

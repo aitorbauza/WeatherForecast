@@ -14,6 +14,9 @@ import com.example.weatherforecast.model.OutfitRecommendation;
 
 import java.util.List;
 
+/**
+ * Clase que muestra el outfit mediante imágenes en un contenedor
+ */
 public class OutfitDisplayHelper {
 
     private final Context context;
@@ -26,11 +29,6 @@ public class OutfitDisplayHelper {
         this.inflater = LayoutInflater.from(context);
     }
 
-    /**
-     * Muestra el outfit mediante imágenes en un contenedor
-     * @param container Contenedor donde se mostrarán las imágenes
-     * @param recommendation Recomendación de outfit con las prendas
-     */
     public void displayOutfitWithImages(ViewGroup container, OutfitRecommendation recommendation) {
         container.removeAllViews();
 
@@ -54,6 +52,7 @@ public class OutfitDisplayHelper {
         container.addView(outfitView);
     }
 
+    // Método encargado de añadir las imágenes de las prendas al contenedor
     private void addItemsImages(ViewGroup container, List<String> items, ItemType type) {
         container.removeAllViews();
 

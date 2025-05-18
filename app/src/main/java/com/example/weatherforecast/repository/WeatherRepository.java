@@ -9,9 +9,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
+/**
+ * Clase encargada de gestionar las llamadas a la API de OpenWeather.
+ */
 public class WeatherRepository {
     private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/";
-    private static final String API_KEY = "fd55aeb51961a4033188497fa3b1f146"; // Reemplaza con tu API Key de OpenWeather
+    private static final String API_KEY = "fd55aeb51961a4033188497fa3b1f146"; // API Key de OpenWeather
 
     private final WeatherApiService apiService;
 
