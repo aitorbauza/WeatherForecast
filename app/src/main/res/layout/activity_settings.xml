@@ -287,6 +287,18 @@
                 android:text="Las recomendaciones de ropa se adaptarán según tus preferencias seleccionadas en este panel."
                 android:textAlignment="center"
                 android:textStyle="italic" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewOutfitButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Ver Outfit"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:backgroundTint="@color/white"
+                android:layout_marginBottom="16dp"/>
         </LinearLayout>
     </ScrollView>
 

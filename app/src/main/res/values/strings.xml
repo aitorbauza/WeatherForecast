@@ -35,4 +35,9 @@
 
     <string name="settings_saved_message">Ajustes guardados correctamente</string>
     <string name="settings_reset_message">Ajustes restablecidos</string>
+
+    <string name="outfit_recommendation_title">Recomendación de outfit</string>
+    <string name="customize_outfit_title">Personalizar outfit</string>
+    <string name="apply">Aplicar</string>
+    <string name="cancel">Cancelar</string>
 </resources>

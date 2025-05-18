@@ -1,10 +1,8 @@
 package com.example.weatherforecast.ui;
 
-import android.content.Context;
-import android.content.Intent;  // Añadido
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;  // Añadido
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,9 +32,10 @@ import com.example.weatherforecast.controller.WeatherController;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
+import com.example.weatherforecast.model.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.service.OutfitDisplayHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,6 +80,9 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     private Button btnCustomizeOutfit;
     private Button btnSaveOutfit;
     private boolean isCustomized = false;
+
+    private OutfitDisplayHelper outfitDisplayHelper;
+    private LinearLayout outfitImagesContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +156,10 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnCustomizeOutfit = findViewById(R.id.btnCustomizeOutfit);
         btnSaveOutfit = findViewById(R.id.btnSaveOutfit);
 
-        btnSaveOutfit.setEnabled(false); // Desactivado por defecto hasta personalización
+        btnSaveOutfit.setEnabled(false);
+
+        outfitImagesContainer = findViewById(R.id.outfitImagesContainer);
+        outfitDisplayHelper = new OutfitDisplayHelper(this);
 
         navigationManager = new NavigationManager(
                 this,
@@ -256,7 +262,8 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         rvOutfitItems.setLayoutManager(new LinearLayoutManager(this));
 
         // Crear el adaptador con todas las categorías de prendas
-        OutfitCustomizeAdapter adapter = new OutfitCustomizeAdapter(this, currentOutfit);
+        // Adaptador modificado para usar imágenes en lugar de texto
+        OutfitCustomizeAdapter adapter = new OutfitCustomizeAdapter(this, currentOutfit, new OutfitImageMapper());
         rvOutfitItems.setAdapter(adapter);
 
         // Botones del diálogo
@@ -318,7 +325,12 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
         cardOutfit.setVisibility(View.VISIBLE);
+
+        // Mostramos el texto de la recomendación (opcional, puedes quitar esto si solo quieres imágenes)
         tvOutfitRecommendation.setText(recommendation.getFormattedOutfit());
+
+        // Mostramos las imágenes del outfit
+        outfitDisplayHelper.displayOutfitWithImages(outfitImagesContainer, recommendation);
     }
 
     @Override
@@ -421,9 +433,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     // Método para buscar sugerencias de ubicaciones
     private void searchLocationSuggestions(String query, ArrayAdapter<String> adapter) {
-        // Aquí implementaremos la búsqueda de sugerencias
-        // Por ahora, usaremos una implementación simple
-        new LocationSuggestionTask(adapter).execute(query);
+         new LocationSuggestionTask(adapter).execute(query);
     }
 
     @Override

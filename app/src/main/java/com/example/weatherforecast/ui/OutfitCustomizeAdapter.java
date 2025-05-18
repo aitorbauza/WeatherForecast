@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -12,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherforecast.R;
+import com.example.weatherforecast.model.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
 
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
 
     private final Context context;
     private final OutfitRecommendation originalOutfit;
+    private final OutfitImageMapper outfitImageMapper;
 
     // Mapeo para mantener alternativas para cada categoría
     private final Map<OutfitCategory, List<String>> categoryAlternatives;
@@ -39,11 +42,12 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         TOP, BOTTOM, FOOTWEAR, OUTERWEAR, ACCESSORIES
     }
 
-    public OutfitCustomizeAdapter(Context context, OutfitRecommendation outfit) {
+    public OutfitCustomizeAdapter(Context context, OutfitRecommendation outfit, OutfitImageMapper outfitImageMapper) {
         this.context = context;
         this.originalOutfit = outfit;
         this.categoryAlternatives = new HashMap<>();
         this.currentSelections = new HashMap<>();
+        this.outfitImageMapper = new OutfitImageMapper();
 
         // Inicializar alternativas y selecciones
         initializeAlternatives();
@@ -134,25 +138,25 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         // Alternativas para prendas superiores
         List<String> topAlternatives = new ArrayList<>(originalOutfit.getTopItems());
         addDefaultAlternatives(topAlternatives, "Camiseta de algodón",
-                "Camisa manga larga", "Camiseta de manga corta");
+                "Camisa elegante", "Camiseta de manga corta");
         categoryAlternatives.put(OutfitCategory.TOP, topAlternatives);
 
         // Alternativas para prendas inferiores
         List<String> bottomAlternatives = new ArrayList<>(originalOutfit.getBottomItems());
-        addDefaultAlternatives(bottomAlternatives, "Jeans", "Pantalón de vestir",
-                "Pantalón corto", "Falda");
+        addDefaultAlternatives(bottomAlternatives, "Vaqueros", "Pantalón casual",
+                "Pantalón corto", "Falda formal");
         categoryAlternatives.put(OutfitCategory.BOTTOM, bottomAlternatives);
 
         // Alternativas para calzado
         List<String> footwearAlternatives = new ArrayList<>(originalOutfit.getFootwear());
-        addDefaultAlternatives(footwearAlternatives, "Zapatillas", "Zapatos formales",
-                "Sandalias", "Botas");
+        addDefaultAlternatives(footwearAlternatives, "Zapatillas casuales", "Zapatos formales",
+                "Sandalias", "Botas de invierno");
         categoryAlternatives.put(OutfitCategory.FOOTWEAR, footwearAlternatives);
 
         // Alternativas para prendas de abrigo
         List<String> outerwearAlternatives = new ArrayList<>(originalOutfit.getOuterWear());
-        addDefaultAlternatives(outerwearAlternatives, "Chaqueta", "Abrigo",
-                "Blazer", "Sudadera", "-");
+        addDefaultAlternatives(outerwearAlternatives, "Chaqueta", "Abrigo de plumas",
+                "Blazer", "Impermeable", "-");
         categoryAlternatives.put(OutfitCategory.OUTERWEAR, outerwearAlternatives);
 
         // Alternativas para accesorios
@@ -241,5 +245,22 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
             tvCategory = itemView.findViewById(R.id.tvCategory);
             spinnerOptions = itemView.findViewById(R.id.spinnerOptions);
         }
+    }
+
+    private void setupItemClickListeners(ImageView itemImage, String item) {
+        itemImage.setOnClickListener(v -> {
+            // Togglear selección (por ejemplo, cambiar opacidad o borde)
+            boolean isSelected = itemImage.getAlpha() == 1.0f;
+
+            if (isSelected) {
+                // Deseleccionar
+                itemImage.setAlpha(0.5f);
+                // Lógica para quitar del outfit
+            } else {
+                // Seleccionar
+                itemImage.setAlpha(1.0f);
+                // Lógica para añadir al outfit
+            }
+        });
     }
 }

@@ -149,7 +149,7 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Sudadera polar mujer");
-                    bottoms.add("Mallas térmicas");
+                    bottoms.add("Pantalón deportivo térmico");
                     shoes.add("Zapatillas deportivas mujer");
                     outerwear.add("Chaqueta deportiva mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
@@ -169,19 +169,19 @@ public class OutfitService {
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa de manga larga");
                     tops.add("Jersey formal mujer");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales mujer");
                     outerwear.add("Abrigo de lana mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de manga larga");
                     tops.add("Jersey formal hombre");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales hombre");
                     outerwear.add("Abrigo de lana hombre");
                 } else {
                     tops.add("Camisa de manga larga");
                     tops.add("Jersey formal");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales");
                     outerwear.add("Abrigo de lana");
                 }
@@ -201,17 +201,17 @@ public class OutfitService {
                 tops.add("Camiseta de manga larga");
 
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Suéter ligero mujer");
+                    tops.add("Jersey mujer");
                     bottoms.add("Vaqueros");
                     shoes.add("Botines mujer");
                     outerwear.add("Chaqueta mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
-                    tops.add("Suéter ligero hombre");
+                    tops.add("Jersey hombre");
                     bottoms.add("Vaqueros");
                     shoes.add("Botines hombre");
                     outerwear.add("Chaqueta hombre");
                 } else {
-                    tops.add("Suéter ligero");
+                    tops.add("Jersey");
                     bottoms.add("Vaqueros");
                     shoes.add("Botines");
                     outerwear.add("Chaqueta");
@@ -225,13 +225,13 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     shoes.add("Zapatillas deportivas mujer");
-                    accessories.add("Banda para las orejas");
+                    accessories.add("Gorra deportiva");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     shoes.add("Zapatillas deportivas hombre");
-                    accessories.add("Gorro deportivo");
+                    accessories.add("Gorra deportiva");
                 } else {
                     shoes.add("Zapatillas deportivas");
-                    accessories.add("Gorro deportivo");
+                    accessories.add("Gorra deportiva");
                 }
                 break;
 
@@ -239,19 +239,19 @@ public class OutfitService {
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa");
                     tops.add("Jersey fino mujer");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales mujer");
                     outerwear.add("Blazer mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de vestir");
                     tops.add("Jersey fino hombre");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales hombre");
                     outerwear.add("Blazer hombre");
                 } else {
                     tops.add("Camisa de vestir");
                     tops.add("Jersey fino");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales");
                     outerwear.add("Blazer");
                 }
@@ -270,17 +270,17 @@ public class OutfitService {
                     tops.add("Camiseta de algodón mujer");
                     bottoms.add("Pantalón casual");
                     shoes.add("Zapatillas casuales mujer");
-                    outerwear.add("Chaqueta ligera mujer");
+                    outerwear.add("Chaqueta mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camiseta de algodón hombre");
                     bottoms.add("Pantalón casual");
                     shoes.add("Zapatillas casuales hombre");
-                    outerwear.add("Chaqueta ligera hombre");
+                    outerwear.add("Chaqueta hombre");
                 } else {
                     tops.add("Camiseta de algodón");
                     bottoms.add("Pantalón casual");
                     shoes.add("Zapatillas casuales");
-                    outerwear.add("Chaqueta ligera");
+                    outerwear.add("Chaqueta");
                 }
                 break;
 
@@ -289,7 +289,7 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Camiseta técnica mujer");
-                    bottoms.add("Mallas");
+                    bottoms.add("Leggings");
                     shoes.add("Zapatillas deportivas mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camiseta técnica hombre");
@@ -307,17 +307,17 @@ public class OutfitService {
                     tops.add("Camisa elegante mujer");
                     bottoms.add("Falda formal");
                     shoes.add("Zapatos formales mujer");
-                    outerwear.add("Blazer ligero mujer");
+                    outerwear.add("Blazer mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa elegante hombre");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales hombre");
-                    outerwear.add("Blazer ligero hombre");
+                    outerwear.add("Blazer hombre");
                 } else {
                     tops.add("Camisa elegante");
-                    bottoms.add("Pantalón de vestir");
+                    bottoms.add("Vaquero");
                     shoes.add("Zapatos formales");
-                    outerwear.add("Blazer ligero");
+                    outerwear.add("Blazer");
                 }
                 break;
         }
@@ -336,11 +336,11 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Camiseta de tirantes mujer");
-                    bottoms.add("Pantalón corto");
+                    bottoms.add("Pantalón corto mujer");
                     shoes.add("Sandalias mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camiseta de manga corta hombre");
-                    bottoms.add("Pantalón corto");
+                    bottoms.add("Pantalón corto hombre");
                     shoes.add("Sandalias hombre");
                 } else {
                     tops.add("Camiseta de manga corta");
@@ -369,17 +369,17 @@ public class OutfitService {
 
             case FORMAL:
                 if (gender == UserPreferences.Gender.FEMALE) {
-                    tops.add("Blusa ligera formal mujer");
-                    bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos formales ligeros mujer");
+                    tops.add("Blusa sin mangas mujer");
+                    bottoms.add("Pantalón Casual");
+                    shoes.add("Zapatos formales mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de manga corta formal hombre");
-                    bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos formales ligeros hombre");
+                    bottoms.add("Pantalón Casual");
+                    shoes.add("Zapatos formales hombre");
                 } else {
                     tops.add("Camisa ligera formal");
-                    bottoms.add("Pantalón de vestir ligero");
-                    shoes.add("Zapatos formales ligeros");
+                    bottoms.add("Pantalón Casual");
+                    shoes.add("Zapatos formales");
                 }
                 break;
         }
@@ -399,11 +399,11 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Top ligero mujer");
-                    bottoms.add("Pantalón corto");
+                    bottoms.add("Pantalón corto mujer");
                     shoes.add("Sandalias mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camiseta de tirantes hombre");
-                    bottoms.add("Pantalón corto");
+                    bottoms.add("Pantalón corto hombre");
                     shoes.add("Sandalias hombre");
                 } else {
                     tops.add("Camiseta de tirantes");
@@ -434,15 +434,15 @@ public class OutfitService {
                 if (gender == UserPreferences.Gender.FEMALE) {
                     tops.add("Blusa sin mangas mujer");
                     bottoms.add("Pantalón de lino");
-                    shoes.add("Zapatos formales ligeros mujer");
+                    shoes.add("Zapatos formales mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     tops.add("Camisa de manga corta formal hombre");
                     bottoms.add("Pantalón de lino");
-                    shoes.add("Zapatos formales ligeros hombre");
+                    shoes.add("Zapatos formales hombre");
                 } else {
                     tops.add("Camisa de lino");
                     bottoms.add("Pantalón de lino");
-                    shoes.add("Zapatos formales ligeros");
+                    shoes.add("Zapatos formales");
                 }
                 break;
         }
@@ -493,13 +493,13 @@ public class OutfitService {
 
                 if (gender == UserPreferences.Gender.FEMALE) {
                     shoes.clear();
-                    shoes.add("Zapatos impermeables mujer");
+                    shoes.add("Zapatillas impermeables mujer");
                 } else if (gender == UserPreferences.Gender.MALE) {
                     shoes.clear();
-                    shoes.add("Zapatos impermeables hombre");
+                    shoes.add("Zapatillas impermeables hombre");
                 } else {
                     shoes.clear();
-                    shoes.add("Zapatos impermeables");
+                    shoes.add("Zapatillas impermeables");
                 }
                 break;
         }
@@ -553,10 +553,10 @@ public class OutfitService {
     // Método que genera un outfit para clima con viento
     private void addWindyDayItems(OutfitRecommendation.Style style, List<String> accessories, UserPreferences.Gender gender) {
         if (style == OutfitRecommendation.Style.CASUAL || style == OutfitRecommendation.Style.FORMAL) {
-            accessories.add("Bufanda");
+            accessories.add("Bufanda gruesa");
 
             if (gender == UserPreferences.Gender.FEMALE && style == OutfitRecommendation.Style.CASUAL) {
-                accessories.add("Pashmina");
+                accessories.add("Bufanda fina");
             }
         } else {
             accessories.add("Braga de cuello");

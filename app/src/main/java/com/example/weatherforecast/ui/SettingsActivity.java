@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -36,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     private MaterialButton resetButton;
     private ImageButton homeButton;
     private ImageView toolbarLogo;
+    private Button viewOutfitButton;
 
     private PreferencesRepository preferencesRepository;
     private UserPreferences currentPreferences;
@@ -73,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
         resetButton = findViewById(R.id.resetButton);
         homeButton = findViewById(R.id.btnHome);
         toolbarLogo = findViewById(R.id.toolbarLogo);
+        viewOutfitButton = findViewById(R.id.viewOutfitButton);
     }
 
     /**
@@ -235,6 +238,8 @@ public class SettingsActivity extends AppCompatActivity {
             updateSaveButtonState();
         });
 
+        viewOutfitButton.setOnClickListener(v -> goToOutfitScreen());
+
         // Listener para el botón de guardar
         saveButton.setOnClickListener(v -> savePreferences());
 
@@ -261,6 +266,11 @@ public class SettingsActivity extends AppCompatActivity {
         originalPreferences = currentPreferences.copy();
         updateSaveButtonState();
         Toast.makeText(this, R.string.settings_saved_message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void goToOutfitScreen() {
+        Intent intent = new Intent(this, OutfitActivity.class);
+        startActivity(intent);
     }
 
     /**
