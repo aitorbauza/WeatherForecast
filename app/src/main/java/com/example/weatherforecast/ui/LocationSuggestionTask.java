@@ -16,7 +16,7 @@ import java.util.List;
 
 public class LocationSuggestionTask extends AsyncTask<String, Void, List<String>> {
     private static final String GEOCODING_API_URL = "https://api.openweathermap.org/geo/1.0/direct";
-    private static final String API_KEY = "fd55aeb51961a4033188497fa3b1f146"; // Usa la misma API key
+    private static final String API_KEY = "fd55aeb51961a4033188497fa3b1f146"; // OpenWeather API
     private static final int LIMIT = 5; // Número de sugerencias a mostrar
 
     private final ArrayAdapter<String> adapter;

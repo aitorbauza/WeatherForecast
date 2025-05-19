@@ -10,23 +10,13 @@
         android:icon="@drawable/ic_clothe_foreground"
         android:title="Outfit"/>
 
-    <!-- Add this item to your existing bottom_navigation_menu.xml -->
     <item
         android:id="@+id/nav_route"
         android:icon="@drawable/ic_route"
         android:title="Ruta" />
 
-    <!-- Espacio reservado para futuros iconos -->
     <item
-        android:id="@+id/nav_placeholder1"
-        android:enabled="false"
-        android:visible="false"
-        android:title="" />
-
-    <item
-        android:id="@+id/nav_placeholder2"
-        android:enabled="false"
-        android:visible="false"
-        android:title="" />
-
+        android:id="@+id/nav_outfit_comparison"
+        android:icon="@drawable/ic_outfit_comparison"
+        android:title="Comparar Outfit"/>
 </menu>

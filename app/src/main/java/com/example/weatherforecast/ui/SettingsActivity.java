@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -19,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.model.UserPreferences;
 import com.example.weatherforecast.repository.PreferencesRepository;
+import com.example.weatherforecast.ui.outfit.OutfitActivity;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;

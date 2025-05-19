@@ -377,7 +377,7 @@ public class OutfitService {
                     bottoms.add("Pantalón Casual");
                     shoes.add("Zapatos formales hombre");
                 } else {
-                    tops.add("Camisa ligera formal");
+                    tops.add("Camisa de manga corta formal hombre");
                     bottoms.add("Pantalón Casual");
                     shoes.add("Zapatos formales");
                 }

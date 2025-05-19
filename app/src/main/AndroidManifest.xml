@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.OutfitActivity"
+        <activity android:name=".ui.outfit.OutfitActivity"
             android:exported="true">
         </activity>
 
@@ -39,7 +39,12 @@
             android:exported="true">
         </activity>
 
-        <!-- Required Google Maps libraries -->
+        <activity
+            android:name=".ui.outfitcomparison.OutfitComparisonActivity"
+            android:exported="true">
+        </activity>
+
+        <!-- Librerías de Google Maps -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

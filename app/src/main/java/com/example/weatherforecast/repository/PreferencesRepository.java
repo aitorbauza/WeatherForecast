@@ -3,9 +3,15 @@ package com.example.weatherforecast.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.model.UserPreferences;
 import com.google.gson.Gson;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Clase encargada de gestionar el almacenamiento y recuperación de las preferencias del usuario.
@@ -91,13 +97,43 @@ public class PreferencesRepository {
     }
 
     // Método para guardar outfit
-    public void saveOutfit(OutfitRecommendation outfit, Context context) {
+    public void saveOutfit(OutfitRecommendation outfit, CurrentWeather weather, Date date, Context context) {
         SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
+        // Crear una entrada que incluya outfit, clima y fecha
+        SavedOutfitEntry entry = new SavedOutfitEntry(outfit, weather, date);
+
+        // Formatear la fecha como clave
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String dateKey = dateFormat.format(date);
+
+        // Usar Gson para serializar el objeto completo
         Gson gson = new Gson();
-        String outfitJson = gson.toJson(outfit);
-        editor.putString("saved_outfit", outfitJson);
+        String entryJson = gson.toJson(entry);
+
+        // Guardar la entrada asociada a su fecha
+        editor.putString("outfit_" + dateKey, entryJson);
         editor.apply();
+    }
+
+    public SavedOutfitEntry getOutfitByDate(Date date, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
+
+        // Formatear la fecha como clave
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String dateKey = dateFormat.format(date);
+
+        String entryJson = prefs.getString("outfit_" + dateKey, null);
+
+        if (entryJson != null) {
+            try {
+                Gson gson = new Gson();
+                return gson.fromJson(entryJson, SavedOutfitEntry.class);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.ui.outfit;
 
 import android.content.Context;
 
@@ -13,6 +13,7 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.OutfitRecommendation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OutfitViewModel extends ViewModel {
@@ -104,7 +105,9 @@ public class OutfitViewModel extends ViewModel {
 
     public boolean saveCustomizedOutfit(OutfitRecommendation outfit, Context context) {
         try {
-            preferencesRepository.saveOutfit(outfit, context);
+            // Guardar con la fecha actual
+            Date currentDate = new Date();
+            preferencesRepository.saveOutfit(outfit, currentWeather, currentDate, context);
             return true;
         } catch (Exception e) {
             errorMessage.setValue("Error al guardar outfit: " + e.getMessage());

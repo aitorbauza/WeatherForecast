@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.ui.outfit;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,8 +34,10 @@ import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
-import com.example.weatherforecast.model.UserPreferences;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
+import com.example.weatherforecast.ui.LocationSuggestionTask;
+import com.example.weatherforecast.ui.NavigationManager;
+import com.example.weatherforecast.ui.SettingsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;

@@ -8,35 +8,30 @@ import android.os.Bundle;
 import androidx.core.app.ActivityOptionsCompat;
 
 import com.example.weatherforecast.R;
+import com.example.weatherforecast.ui.outfit.OutfitActivity;
+import com.example.weatherforecast.ui.outfitcomparison.OutfitComparisonActivity;
 import com.example.weatherforecast.ui.route.RouteWeatherActivity;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * Clase encargada de gestionar la navegación del bottomnav
+ */
 public class NavigationManager {
     private final Context context;
     private final BottomNavigationView bottomNavigation;
     private String currentCity;
     private final ActivityType currentActivity;
     private static final String EXTRA_FORCE_RELOAD = "FORCE_RELOAD_WEATHER";
-    private static final String EXTRA_PREVIOUS_ACTIVITY = "PREVIOUS_ACTIVITY";  // Nuevo extra para rastrear la actividad anterior
+    private static final String EXTRA_PREVIOUS_ACTIVITY = "PREVIOUS_ACTIVITY";  // Registrar la actividad anterior
 
-    /**
-     * Define los tipos de actividades que pueden usar esta clase
-     */
     public enum ActivityType {
         WEATHER,
         OUTFIT,
-        ROUTE
+        ROUTE,
+        OUTFIT_COMPARISON
     }
 
-    /**
-     * Constructor para la clase NavigationManager
-     *
-     * @param context El contexto de la actividad
-     * @param bottomNavigation La vista de navegación inferior
-     * @param currentCity El nombre de la ciudad actual
-     * @param currentActivity El tipo de actividad actual
-     */
     public NavigationManager(Context context, BottomNavigationView bottomNavigation,
                              String currentCity, ActivityType currentActivity) {
         this.context = context;
@@ -45,9 +40,6 @@ public class NavigationManager {
         this.currentActivity = currentActivity;
     }
 
-    /**
-     * Configura la navegación inferior para la actividad actual
-     */
     public void setupBottomNavigation() {
         // Establece el ítem seleccionado según la actividad actual
         switch (currentActivity) {
@@ -60,16 +52,20 @@ public class NavigationManager {
             case ROUTE:
                 bottomNavigation.setSelectedItemId(R.id.nav_route);
                 break;
+            case OUTFIT_COMPARISON:
+                bottomNavigation.setSelectedItemId(R.id.nav_outfit_comparison);
+                break;
         }
 
-        // Configura el listener para gestionar la navegación
+        // Listener para gestionar la navegación
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             // No navegar si ya estamos en la actividad seleccionada
             if ((itemId == R.id.nav_weather && currentActivity == ActivityType.WEATHER) ||
                     (itemId == R.id.nav_clothing && currentActivity == ActivityType.OUTFIT) ||
-                    (itemId == R.id.nav_route && currentActivity == ActivityType.ROUTE)) {
+                    (itemId == R.id.nav_route && currentActivity == ActivityType.ROUTE) ||
+                    (itemId == R.id.nav_outfit_comparison && currentActivity == ActivityType.OUTFIT_COMPARISON)) {
                 return true;
             }
 
@@ -83,16 +79,19 @@ public class NavigationManager {
             } else if (itemId == R.id.nav_route) {
                 navigateToRouteWeatherScreen();
                 return true;
+            } else if (itemId == R.id.nav_outfit_comparison) {
+                navigateToOutfitComparisonScreen();
+                return true;
             }
             return false;
         });
     }
 
+    // Método que te lleva a la pantalla de clima
     private void navigateToWeatherScreen() {
         Intent intent = new Intent(context, WeatherActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
 
-        // Añadir información de la actividad anterior para ayudar en la depuración
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
         // Forzar la recarga de datos solo si venimos de una actividad diferente
@@ -100,61 +99,61 @@ public class NavigationManager {
             intent.putExtra(EXTRA_FORCE_RELOAD, true);
         }
 
-        // Usar una estrategia de flags uniforme para todas las actividades
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Este flag asegura que solo se abra una instancia de WeatherActivity
 
         context.startActivity(intent);
         applyTransition();
     }
 
-    /**
-     * Navega a la pantalla de vestimenta
-     */
-    // En NavigationManager.java - modificar navigateToOutfitScreen()
+    // Método que te lleva a la pantalla de outfit
     private void navigateToOutfitScreen() {
         Intent intent = new Intent(context, OutfitActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
-        // No forzar la recarga para preservar los datos del outfit
         // Solo forzar si venimos de otra actividad y necesitamos nueva info del clima
         if (currentActivity != ActivityType.OUTFIT) {
-            intent.putExtra(EXTRA_FORCE_RELOAD, false);  // Cambiar a false para no perder datos
+            intent.putExtra(EXTRA_FORCE_RELOAD, false);
         }
 
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Este flag asegura que solo se abra una instancia de OutfitActivity
         context.startActivity(intent);
         applyTransition();
     }
 
-    /**
-     * Navega a la pantalla de ruta meteorológica
-     * Versión optimizada que usa lazy loading
-     */
+    // Método que te lleva a la pantalla de ruta
     private void navigateToRouteWeatherScreen() {
         Intent intent = new Intent(context, RouteWeatherActivity.class);
         intent.putExtra("ORIGIN_CITY", currentCity);
-        intent.putExtra("LAZY_LOAD", true);  // Añadimos un flag para lazy loading
+        intent.putExtra("LAZY_LOAD", true);
 
         // Añadir información de la actividad anterior para ayudar en la depuración
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
-        // Usa un bundle para actividades recientes
+        // Bundle que contiene las opciones de animación
         Bundle options = ActivityOptionsCompat.makeCustomAnimation(
                 context,
                 android.R.anim.fade_in,
                 android.R.anim.fade_out).toBundle();
 
         // Usar SINGLE_TOP para evitar múltiples instancias de RouteWeatherActivity
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP); // Estos flags asegura que solo se abra una instancia de RouteWeatherActivity
 
         context.startActivity(intent, options);
         applyTransition();
     }
 
-    /**
-     * Aplica la transición de animación
-     */
+    public void navigateToOutfitComparisonScreen() {
+        Intent intent = new Intent(context, OutfitComparisonActivity.class);
+        intent.putExtra("CITY_NAME", currentCity);
+        intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+        applyTransition();
+    }
+
+    // Método para aplicar la transición
     private void applyTransition() {
         // Si esta navegación ocurre en una actividad, y no en un fragmento o servicio
         if (context instanceof Activity) {
@@ -164,20 +163,9 @@ public class NavigationManager {
         }
     }
 
-    /**
-     * Verifica si se debe forzar la recarga de datos
-     * @return true si se debe forzar la recarga
-     */
+    // Método para verificar si se debe forzar la recarga de datos
     public static boolean shouldForceReload(Intent intent) {
         return intent != null && intent.getBooleanExtra(EXTRA_FORCE_RELOAD, false);
-    }
-
-    /**
-     * Obtiene la actividad anterior de la que se navegó
-     * @return Nombre de la actividad anterior o null si no está disponible
-     */
-    public static String getPreviousActivity(Intent intent) {
-        return intent != null ? intent.getStringExtra(EXTRA_PREVIOUS_ACTIVITY) : null;
     }
 
     public void updateCurrentCity(String newCity) {

@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.ui.outfit;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
