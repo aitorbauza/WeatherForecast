@@ -46,9 +46,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ *  Actividad principal del Outfit encargada de mostrar la recomendación de ropa
+ */
 public class OutfitActivity extends AppCompatActivity implements WeatherController.WeatherView {
 
-    private static final String DEFAULT_CITY = "Palma de Mallorca"; // Ciudad por defecto, igual que en MainActivity
+    private static final String DEFAULT_CITY = "Palma de Mallorca"; // Ciudad por defecto
 
     private TextView locationText;
     private TextView weatherEmoji;
@@ -64,7 +67,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     private RadioButton radioFormal;
     private Button btnLoadOutfit;
     private CardView cardOutfit;
-    private TextView tvOutfitRecommendation;
     private ProgressBar progressBar;
 
     private WeatherController weatherController;
@@ -152,7 +154,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnChangeLocation = findViewById(R.id.btnChangeLocation);
         btnChangeLocation.setOnClickListener(v -> showLocationDialog());
 
-        // Nuevos elementos UI
         btnSettings = findViewById(R.id.btnSettings);
         toolbarLogo = findViewById(R.id.toolbarLogo);
         bottomNavigation = findViewById(R.id.bottomNavigation);
@@ -178,7 +179,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         // Carga el fondo GIF
         Glide.with(this)
                 .asGif()
-                .load(R.drawable.cielo) // Asegúrate de tener este GIF en res/drawable
+                .load(R.drawable.cielo)
                 .centerCrop()
                 .into(backgroundGif);
     }
@@ -187,6 +188,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         OutfitViewModelFactory factory = new OutfitViewModelFactory(this);
         outfitViewModel = new ViewModelProvider(this, factory).get(OutfitViewModel.class);
 
+        // Lambda que se ejecuta cuando se actualiza el outfit
         outfitViewModel.getOutfitRecommendation().observe(this, this::showOutfitRecommendation);
 
         outfitViewModel.isLoading().observe(this, isLoading -> {
@@ -226,6 +228,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         bottomNavigation.setSelectedItemId(R.id.nav_clothing);
     }
 
+    // Listeners para los botones
     private void setupListeners() {
         radioGroupStyle.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radioSporty) {
@@ -269,20 +272,18 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         RecyclerView rvOutfitItems = dialogView.findViewById(R.id.rvOutfitItems);
         rvOutfitItems.setLayoutManager(new LinearLayoutManager(this));
 
-        // Crear el adaptador con todas las categorías de prendas
-        // Adaptador modificado para usar imágenes en lugar de texto
+        // Crear el adaptador con todas las categorías de prendas en imágenes
         OutfitCustomizeAdapter adapter = new OutfitCustomizeAdapter(this, currentOutfit, new OutfitImageMapper());
         rvOutfitItems.setAdapter(adapter);
 
-        // Botones del diálogo
+        // Botones de diálogo
         Button btnApply = dialogView.findViewById(R.id.btnApplyCustomization);
         Button btnCancel = dialogView.findViewById(R.id.btnCancelCustomization);
 
         AlertDialog dialog = builder.create();
 
-        // Configurar acciones de los botones
+        // Botón de aplicar cambios
         btnApply.setOnClickListener(v -> {
-            // Aplicar cambios de personalización
             OutfitRecommendation customizedOutfit = adapter.getCustomizedOutfit();
             outfitViewModel.setCustomizedOutfit(customizedOutfit);
             showOutfitRecommendation(customizedOutfit);
@@ -318,19 +319,21 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         }
     }
 
+    // Método que carga los datos del clima
     private void loadWeatherData() {
         showLoading(true);
 
-        // Añadir pequeña demora para permitir que la UI se actualice
         new Handler().postDelayed(() -> {
             if (weatherController == null) {
                 weatherController = new WeatherController(this);
                 weatherController.setView(this);
             }
             weatherController.loadWeatherData(currentCity);
-        }, 100);
+        }, 200); // Pequeña demora para permitir que la UI se actualice
     }
 
+
+    // Método para mostrar la recomendación de ropa
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
         cardOutfit.setVisibility(View.VISIBLE);
 
@@ -349,7 +352,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         // Calcular la puntuación de confort
         outfitViewModel.calculateComfortRating(currentOutfit);
 
-        // Crear el diálogo
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_outfit_rating, null);
         builder.setView(dialogView);
@@ -360,7 +362,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         LinearLayout outfitRatingImagesContainer = dialogView.findViewById(R.id.outfitRatingImagesContainer);
         Button btnCloseRating = dialogView.findViewById(R.id.btnCloseRating);
 
-        // Mostrar la puntuación y el mensaje
+        // Puntuación y mensaje
         Integer comfortRating = outfitViewModel.getComfortRating().getValue();
         if (comfortRating != null) {
             progressComfort.setProgress(comfortRating);
@@ -371,12 +373,11 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             tvRatingMessage.setText(ratingMessage);
         }
 
-        // Mostrar las imágenes del outfit
+        // Imágenes del outfit
         outfitDisplayHelper.displayOutfitWithImages(outfitRatingImagesContainer, currentOutfit);
 
         AlertDialog dialog = builder.create();
 
-        // Configurar el botón de cerrar
         btnCloseRating.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
@@ -384,11 +385,11 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     @Override
     public void displayCurrentWeather(CurrentWeather weather) {
+        // Este thread se encarga de actualizar la UI en el hilo principal
         runOnUiThread(() -> {
             // Actualizar la ciudad actual con la respuesta
             currentCity = weather.getLocation();
 
-            // Formato para "Hoy, HH:mm"
             SimpleDateFormat dateFormat = new SimpleDateFormat("'Hoy', HH:mm", new Locale("es", "ES"));
             String currentDateTime = dateFormat.format(new Date());
 
@@ -433,6 +434,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 
+    // Método para mostrar el diálogo de búsqueda de ubicación
     private void showLocationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_location_search, null);
@@ -441,7 +443,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         AutoCompleteTextView autoCompleteTextView = dialogView.findViewById(R.id.autoCompleteLocation);
         ImageButton btnApply = dialogView.findViewById(R.id.btnApplyLocation);
 
-        // Adaptador para el autocompletado (usamos un adaptador simple por ahora)
+        // Adapter para el autocompletado
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<>());
@@ -462,7 +464,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             }
         });
 
-        // Configura un TextWatcher para el autocompletado
+        // TextWatcher para el autocompletado
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -470,13 +472,14 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 2) {
-                    // Buscar sugerencias de ciudades cuando hay al menos 3 caracteres
+                    // Buscar sugerencias de ciudades cuando hay al menos 3 carácteres
                     searchLocationSuggestions(s.toString(), adapter);
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
     }
 

@@ -35,6 +35,7 @@ public class WeatherRepository {
         return apiService.getForecast(city, "metric", API_KEY);
     }
 
+    // Interfaz para definir las llamadas a la API
     public interface WeatherApiService {
         @GET("weather")
         Call<WeatherResponse> getCurrentWeather(

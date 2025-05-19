@@ -280,8 +280,8 @@ public class SettingsActivity extends AppCompatActivity {
         // Crear una nueva instancia de preferencias predeterminadas
         currentPreferences = new UserPreferences();
 
-        nameEditText.setText("");
-        surnameEditText.setText("");
+        nameEditText.setText("Nombre");
+        surnameEditText.setText("¡Introduce tus apellidos!");
 
         // Actualizar la UI con los valores restablecidos
         updateUIFromPreferences();

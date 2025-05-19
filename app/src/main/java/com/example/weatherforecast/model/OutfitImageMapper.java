@@ -2,6 +2,7 @@ package com.example.weatherforecast.model;
 
 import androidx.annotation.DrawableRes;
 
+
 import com.example.weatherforecast.R;
 
 import java.util.HashMap;

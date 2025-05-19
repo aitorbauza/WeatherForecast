@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;

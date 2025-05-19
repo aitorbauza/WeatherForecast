@@ -8,7 +8,6 @@ import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.WeatherCache;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

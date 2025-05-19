@@ -272,7 +272,7 @@ public class OutfitComparisonActivity extends AppCompatActivity {
     private void displayWeatherInfo(CurrentWeather weather, TextView textView) {
         if (weather != null) {
             String weatherInfo = String.format(
-                    "%s %s\nTemp: %.1f°C \nHumedad: %d%%",
+                    "%s %s\nTemperatura: %.1f°C \nHumedad: %d%%",
                     weather.getLocation(),
                     weather.getWeatherIcon(),
                     weather.getTemperature(),

@@ -82,30 +82,4 @@ public class UserPreferences {
         );
     }
 
-
-    // Método para comparar instancias
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        UserPreferences that = (UserPreferences) obj;
-
-        if (!name.equals(that.name)) return false;
-        if (!surname.equals(that.surname)) return false;
-        if (gender != that.gender) return false;
-        if (coldTolerance != that.coldTolerance) return false;
-        return heatTolerance == that.heatTolerance;
-    }
-
-    // Método para obtener el hash
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + surname.hashCode();
-        result = 31 * result + gender.hashCode();
-        result = 31 * result + coldTolerance.hashCode();
-        result = 31 * result + heatTolerance.hashCode();
-        return result;
-    }
 }

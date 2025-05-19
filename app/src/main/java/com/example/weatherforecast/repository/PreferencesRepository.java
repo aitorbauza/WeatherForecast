@@ -79,7 +79,7 @@ public class PreferencesRepository {
     }
 
 
-        // Método para obtener el outfit guardado
+        //Obtiene el outfit guardado
         public OutfitRecommendation getSavedOutfit(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
         String outfitJson = prefs.getString("saved_outfit", null);
@@ -101,7 +101,6 @@ public class PreferencesRepository {
         SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        // Crear una entrada que incluya outfit, clima y fecha
         SavedOutfitEntry entry = new SavedOutfitEntry(outfit, weather, date);
 
         // Formatear la fecha como clave
