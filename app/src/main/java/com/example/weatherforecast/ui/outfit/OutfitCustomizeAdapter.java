@@ -167,8 +167,8 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
             // Unir accesorios en una sola string para el spinner
             accessoriesAlternatives.add(String.join(", ", originalOutfit.getAccessories()));
         }
-        addDefaultAlternatives(accessoriesAlternatives, "Gafas de sol", "Bufanda",
-                "Gorro", "Guantes", "-");
+        addDefaultAlternatives(accessoriesAlternatives, "Gafas de sol", "Bufanda ligera",
+                "Gorra", "Guantes", "-");
         categoryAlternatives.put(OutfitCategory.ACCESSORIES, accessoriesAlternatives);
     }
 

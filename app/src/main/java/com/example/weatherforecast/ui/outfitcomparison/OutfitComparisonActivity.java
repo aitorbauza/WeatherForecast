@@ -24,6 +24,7 @@ import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
 import com.example.weatherforecast.ui.NavigationManager;
 import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -64,10 +65,22 @@ public class OutfitComparisonActivity extends AppCompatActivity {
 
     private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outfit_comparison);
+
+        if (getIntent().hasExtra("username")) {
+            username = getIntent().getStringExtra("username");
+        } else {
+            // Redireccionar a login si no hay usuario
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         if (getIntent().hasExtra("CITY_NAME")) {
             currentCity = getIntent().getStringExtra("CITY_NAME");
@@ -79,7 +92,9 @@ public class OutfitComparisonActivity extends AppCompatActivity {
         setupNavigation();
         setupToolbar();
 
+        // Fecha del primer cardview (ayer)
         Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date currentDate = calendar.getTime();
         tvFirstDate.setText(dateFormatter.format(currentDate));
 
@@ -129,6 +144,8 @@ public class OutfitComparisonActivity extends AppCompatActivity {
         OutfitComparisonViewModelFactory factory = new OutfitComparisonViewModelFactory(this);
         viewModel = new ViewModelProvider(this, factory).get(OutfitComparisonViewModel.class);
 
+        viewModel.setUsername(username);
+
         viewModel.getFirstOutfitEntry().observe(this, outfitEntry -> {
             if (outfitEntry != null) {
                 displayFirstOutfit(outfitEntry);
@@ -163,14 +180,8 @@ public class OutfitComparisonActivity extends AppCompatActivity {
 
         btnCompare.setOnClickListener(v -> {
             cardSecondOutfit.setVisibility(View.VISIBLE);
-            // Segunda fecha: un día más tarde (default)
+            // Segunda fecha (hoy)
             Calendar calendar = Calendar.getInstance();
-            try {
-                Date firstDate = dateFormatter.parse(tvFirstDate.getText().toString());
-                calendar.setTime(firstDate);
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-            } catch (Exception e) {
-            }
             String defaultSecondDate = dateFormatter.format(calendar.getTime());
             tvSecondDate.setText(defaultSecondDate);
 
@@ -197,6 +208,7 @@ public class OutfitComparisonActivity extends AppCompatActivity {
 
     private void goToSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 

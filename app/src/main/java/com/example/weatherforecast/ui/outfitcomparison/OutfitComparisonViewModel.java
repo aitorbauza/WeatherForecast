@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.weatherforecast.data.DBHelper;
 import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.repository.PreferencesRepository;
 
@@ -20,33 +21,40 @@ public class OutfitComparisonViewModel extends ViewModel {
     private final MutableLiveData<SavedOutfitEntry> secondOutfitEntry = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
+    private String username;
+
     private final PreferencesRepository preferencesRepository;
 
     public OutfitComparisonViewModel(Context context) {
-        this.preferencesRepository = new PreferencesRepository(context);
+        this.preferencesRepository = new PreferencesRepository(context, username);
     }
 
     // Método para cargar el primer outfit por fecha
     public void loadFirstOutfitByDate(Date date, Context context) {
-        try {
-            SavedOutfitEntry outfitEntry = preferencesRepository.getOutfitByDate(date, context);
+        DBHelper dbHelper = new DBHelper(context);
+        SavedOutfitEntry outfitEntry = dbHelper.getOutfitByDate(username, date);
+
+        if (outfitEntry != null) {
             firstOutfitEntry.setValue(outfitEntry);
-        } catch (Exception e) {
-            errorMessage.setValue("Error al cargar outfit: " + e.getMessage());
+        } else {
+            firstOutfitEntry.setValue(null);
+            errorMessage.setValue("No hay outfit guardado para esta fecha");
         }
     }
 
-    // Método para cargar el segundo outfit por fecha
     public void loadSecondOutfitByDate(Date date, Context context) {
-        try {
-            SavedOutfitEntry outfitEntry = preferencesRepository.getOutfitByDate(date, context);
+        DBHelper dbHelper = new DBHelper(context);
+        SavedOutfitEntry outfitEntry = dbHelper.getOutfitByDate(username, date);
+
+        if (outfitEntry != null) {
             secondOutfitEntry.setValue(outfitEntry);
-        } catch (Exception e) {
-            errorMessage.setValue("Error al cargar outfit de comparación: " + e.getMessage());
+        } else {
+            secondOutfitEntry.setValue(null);
+            errorMessage.setValue("No hay outfit guardado para esta fecha");
         }
     }
 
-    // Getters
+    // Getters y Setters
     public LiveData<SavedOutfitEntry> getFirstOutfitEntry() {
         return firstOutfitEntry;
     }
@@ -60,4 +68,7 @@ public class OutfitComparisonViewModel extends ViewModel {
         errorMessage.setValue(message);
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

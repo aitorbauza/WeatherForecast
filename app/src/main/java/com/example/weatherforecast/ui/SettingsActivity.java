@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.model.UserPreferences;
 import com.example.weatherforecast.repository.PreferencesRepository;
+import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.example.weatherforecast.ui.outfit.OutfitActivity;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 import com.google.android.material.button.MaterialButton;
@@ -43,9 +44,22 @@ public class SettingsActivity extends AppCompatActivity {
     private UserPreferences currentPreferences;
     private UserPreferences originalPreferences;
 
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getIntent().hasExtra("username")) {
+            username = getIntent().getStringExtra("username");
+        } else {
+            // Si no hay usuario, volver a la pantalla de login
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_settings);
 
         initRepository();
@@ -59,7 +73,7 @@ public class SettingsActivity extends AppCompatActivity {
      * Inicializa el repositorio de preferencias.
      */
     private void initRepository() {
-        preferencesRepository = new PreferencesRepository(this);
+        preferencesRepository = new PreferencesRepository(this, username);
     }
 
     /**
@@ -97,10 +111,11 @@ public class SettingsActivity extends AppCompatActivity {
      * Carga las preferencias del usuario desde el repositorio.
      */
     private void loadPreferences() {
-        originalPreferences = preferencesRepository.getUserPreferences();
+        // Get user preferences from DB with username
+        originalPreferences = preferencesRepository.getUserPreferences(username);
         currentPreferences = originalPreferences.copy();
 
-        // Establecer valores en los campos
+        // Update UI
         updateUIFromPreferences();
     }
 
@@ -262,7 +277,7 @@ public class SettingsActivity extends AppCompatActivity {
      * Guarda las preferencias actuales.
      */
     private void savePreferences() {
-        preferencesRepository.saveUserPreferences(currentPreferences);
+        preferencesRepository.saveUserPreferences(currentPreferences, username);
         originalPreferences = currentPreferences.copy();
         updateSaveButtonState();
         Toast.makeText(this, R.string.settings_saved_message, Toast.LENGTH_SHORT).show();
@@ -270,6 +285,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void goToOutfitScreen() {
         Intent intent = new Intent(this, OutfitActivity.class);
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 
@@ -293,7 +309,8 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private void navigateToHome() {
         Intent intent = new Intent(this, WeatherActivity.class);
-        startActivity(intent);  // Añadido: iniciar la actividad
+        intent.putExtra("username", username);
+        startActivity(intent);
     }
 
     @Override

@@ -141,24 +141,6 @@
                         android:layout_marginTop="6dp">
 
                         <TextView
-                            android:id="@+id/maxTempText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textSize="14sp"
-                            android:textColor="#212121"
-                            tools:text="Máx: 28°C" />
-
-                        <TextView
-                            android:id="@+id/minTempText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:textSize="14sp"
-                            android:textColor="#212121"
-                            tools:text="Mín: 18°C" />
-
-                        <TextView
                             android:id="@+id/humidityText"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -167,7 +149,7 @@
                             android:textColor="#212121"
                             android:drawableStart="@drawable/ic_humidity"
                             android:drawablePadding="4dp"
-                            tools:text="45%" />
+                            tools:text="Humedad: 45%" />
                     </LinearLayout>
 
                     <TextView

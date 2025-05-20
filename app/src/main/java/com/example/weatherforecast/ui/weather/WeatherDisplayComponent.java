@@ -17,8 +17,6 @@ public class WeatherDisplayComponent {
     private final TextView weatherEmoji;
     private final TextView temperatureText;
     private final TextView weatherConditionText;
-    private final TextView maxTempText;
-    private final TextView minTempText;
     private final TextView weatherSummaryText;
     private final TextView humidityText;
 
@@ -27,16 +25,12 @@ public class WeatherDisplayComponent {
             TextView weatherEmoji,
             TextView temperatureText,
             TextView weatherConditionText,
-            TextView maxTempText,
-            TextView minTempText,
             TextView weatherSummaryText,
             TextView humidityText) {
         this.locationText = locationText;
         this.weatherEmoji = weatherEmoji;
         this.temperatureText = temperatureText;
         this.weatherConditionText = weatherConditionText;
-        this.maxTempText = maxTempText;
-        this.minTempText = minTempText;
         this.weatherSummaryText = weatherSummaryText;
         this.humidityText = humidityText;
     }
@@ -54,9 +48,7 @@ public class WeatherDisplayComponent {
         weatherEmoji.setText(weather.getWeatherIcon());
         temperatureText.setText(String.format("%.1f°C", weather.getTemperature()));
         weatherConditionText.setText(weather.getWeatherCondition());
-        maxTempText.setText(String.format("Máx: %.1f°C", weather.getMaxTemperature()));
-        minTempText.setText(String.format("Mín: %.1f°C", weather.getMinTemperature()));
-        humidityText.setText(String.format("%d%%", weather.getHumidity()));
+        humidityText.setText(String.format("Humedad: %d%%", weather.getHumidity()));
         weatherSummaryText.setText(currentDateTime + " - " + weather.getSummary());
     }
 }

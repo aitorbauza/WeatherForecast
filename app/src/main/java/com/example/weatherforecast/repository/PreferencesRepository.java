@@ -3,6 +3,7 @@ package com.example.weatherforecast.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.weatherforecast.data.DBHelper;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.OutfitRecommendation;
 import com.example.weatherforecast.model.SavedOutfitEntry;
@@ -17,7 +18,8 @@ import java.util.Locale;
  * Clase encargada de gestionar el almacenamiento y recuperación de las preferencias del usuario.
  */
 public class PreferencesRepository {
-    private static final String PREFS_NAME = "weather_app_preferences";
+    private static final String PREFS_NAME_BASE = "weather_app_preferences_";
+    private final String userSpecificPrefsName;
     private static final String KEY_NAME = "user_name";
     private static final String KEY_SURNAME = "user_surname";
     private static final String KEY_GENDER = "user_gender";
@@ -25,13 +27,22 @@ public class PreferencesRepository {
     private static final String KEY_HEAT_TOLERANCE = "heat_tolerance";
 
     private final SharedPreferences preferences;
+    private final DBHelper dbHelper;
+    private Context context;
 
-    public PreferencesRepository(Context context) {
-        this.preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    public PreferencesRepository(Context context, String username) {
+        this.userSpecificPrefsName = PREFS_NAME_BASE + username;
+        this.preferences = context.getSharedPreferences(userSpecificPrefsName, Context.MODE_PRIVATE);
+        this.dbHelper = new DBHelper(context);
+        this.context = context;
+    }
+
+    public UserPreferences getUserPreferences(String username) {
+        return dbHelper.getUserPreferences(username);
     }
 
     // Método que guarda las preferencias del usuario
-    public void saveUserPreferences(UserPreferences userPreferences) {
+    public boolean saveUserPreferences(UserPreferences userPreferences, String username) {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putString(KEY_NAME, userPreferences.getName());
@@ -41,6 +52,7 @@ public class PreferencesRepository {
         editor.putString(KEY_HEAT_TOLERANCE, userPreferences.getHeatTolerance().name());
 
         editor.apply();
+        return dbHelper.saveUserPreferences(username, userPreferences);
     }
 
     // Las recupera
@@ -135,4 +147,5 @@ public class PreferencesRepository {
         }
         return null;
     }
+
 }

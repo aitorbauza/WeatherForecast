@@ -92,12 +92,15 @@ public class NavigationManager {
         Intent intent = new Intent(context, WeatherActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
 
-        intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
-
         // Forzar la recarga de datos solo si venimos de una actividad diferente
-        if (currentActivity != ActivityType.WEATHER) {
-            intent.putExtra(EXTRA_FORCE_RELOAD, true);
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.getIntent().hasExtra("username")) {
+                String username = activity.getIntent().getStringExtra("username");
+                intent.putExtra("username", username);
+            }
         }
+        intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Este flag asegura que solo se abra una instancia de WeatherActivity
 
@@ -109,12 +112,16 @@ public class NavigationManager {
     private void navigateToOutfitScreen() {
         Intent intent = new Intent(context, OutfitActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
-        intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
         // Solo forzar si venimos de otra actividad y necesitamos nueva info del clima
-        if (currentActivity != ActivityType.OUTFIT) {
-            intent.putExtra(EXTRA_FORCE_RELOAD, false);
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.getIntent().hasExtra("username")) {
+                String username = activity.getIntent().getStringExtra("username");
+                intent.putExtra("username", username);
+            }
         }
+        intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Este flag asegura que solo se abra una instancia de OutfitActivity
         context.startActivity(intent);
@@ -127,6 +134,13 @@ public class NavigationManager {
         intent.putExtra("ORIGIN_CITY", currentCity);
         intent.putExtra("LAZY_LOAD", true);
 
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.getIntent().hasExtra("username")) {
+                String username = activity.getIntent().getStringExtra("username");
+                intent.putExtra("username", username);
+            }
+        }
         // Añadir información de la actividad anterior para ayudar en la depuración
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
@@ -146,6 +160,14 @@ public class NavigationManager {
     public void navigateToOutfitComparisonScreen() {
         Intent intent = new Intent(context, OutfitComparisonActivity.class);
         intent.putExtra("CITY_NAME", currentCity);
+
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.getIntent().hasExtra("username")) {
+                String username = activity.getIntent().getStringExtra("username");
+                intent.putExtra("username", username);
+            }
+        }
         intent.putExtra(EXTRA_PREVIOUS_ACTIVITY, currentActivity.name());
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

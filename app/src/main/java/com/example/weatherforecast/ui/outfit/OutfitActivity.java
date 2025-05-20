@@ -29,15 +29,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.controller.WeatherController;
+import com.example.weatherforecast.data.DBHelper;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
+import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
 import com.example.weatherforecast.ui.LocationSuggestionTask;
 import com.example.weatherforecast.ui.NavigationManager;
 import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -91,11 +94,23 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     private Button btnViewRating;
 
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_outfit);
 
+        if (getIntent().hasExtra("username")) {
+            username = getIntent().getStringExtra("username");
+        } else {
+            // Redireccionar a login si no hay usuario
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        setContentView(R.layout.activity_outfit);
         // Recuperar los datos de la ciudad enviados desde la actividad anterior
         if (getIntent().hasExtra("CITY_NAME")) {
             currentCity = getIntent().getStringExtra("CITY_NAME");
@@ -138,8 +153,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         weatherEmoji = findViewById(R.id.weatherEmoji);
         temperatureText = findViewById(R.id.temperatureText);
         weatherConditionText = findViewById(R.id.weatherConditionText);
-        maxTempText = findViewById(R.id.maxTempText);
-        minTempText = findViewById(R.id.minTempText);
         weatherSummaryText = findViewById(R.id.weatherSummaryText);
         humidityText = findViewById(R.id.humidityText);
         radioGroupStyle = findViewById(R.id.radioGroupStyle);
@@ -185,7 +198,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     }
 
     private void initViewModel() {
-        OutfitViewModelFactory factory = new OutfitViewModelFactory(this);
+        OutfitViewModelFactory factory = new OutfitViewModelFactory(this, username);
         outfitViewModel = new ViewModelProvider(this, factory).get(OutfitViewModel.class);
 
         // Lambda que se ejecuta cuando se actualiza el outfit
@@ -218,6 +231,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(OutfitActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra("username", username);
             startActivity(intent);
         });
     }
@@ -305,10 +319,12 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         if (!isCustomized) return;
 
         OutfitRecommendation customOutfit = outfitViewModel.getOutfitRecommendation().getValue();
-        if (customOutfit != null) {
-            // Usar el repositorio para guardar
-            boolean saved = outfitViewModel.saveCustomizedOutfit(customOutfit, this);
+        CurrentWeather currentWeather = outfitViewModel.getCurrentWeather().getValue();
 
+        DBHelper dbHelper = new DBHelper(this);
+        boolean saved = dbHelper.saveOutfit(username, customOutfit, currentWeather, new Date());
+
+        if (customOutfit != null && currentWeather != null) {
             if (saved) {
                 Toast.makeText(this, "Outfit guardado correctamente", Toast.LENGTH_SHORT).show();
                 btnSaveOutfit.setEnabled(false);
@@ -335,11 +351,21 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     // Método para mostrar la recomendación de ropa
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
+        // Asegurarse que el outfit card esté visible
         cardOutfit.setVisibility(View.VISIBLE);
+
+        // Si la recomendación es null, mostrar un mensaje y ocultar botones relacionados
+        if (recommendation == null) {
+            Toast.makeText(this, "No se pudo cargar el outfit", Toast.LENGTH_SHORT).show();
+            btnViewRating.setVisibility(View.GONE);
+            btnSaveOutfit.setEnabled(false);
+            return;
+        }
 
         // Mostramos las imágenes del outfit
         outfitDisplayHelper.displayOutfitWithImages(outfitImagesContainer, recommendation);
 
+        // Mostrar botón para ver calificación
         btnViewRating.setVisibility(View.VISIBLE);
     }
 
@@ -397,13 +423,13 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             weatherEmoji.setText(weather.getWeatherIcon());
             temperatureText.setText(String.format("%.1f°C", weather.getTemperature()));
             weatherConditionText.setText(weather.getWeatherCondition());
-            maxTempText.setText(String.format("Máx: %.1f°C", weather.getMaxTemperature()));
-            minTempText.setText(String.format("Mín: %.1f°C", weather.getMinTemperature()));
-            humidityText.setText(String.format("%d%%", weather.getHumidity()));
+            humidityText.setText(String.format("Humedad: %d%%", weather.getHumidity()));
             weatherSummaryText.setText(currentDateTime + " - " + weather.getSummary());
 
             // Actualizar el ViewModel con los datos meteorológicos
             outfitViewModel.setCurrentWeather(weather);
+
+            cardOutfit.setVisibility(View.GONE);
 
             // Ocultar indicador de carga
             showLoading(false);
@@ -488,23 +514,22 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
          new LocationSuggestionTask(adapter).execute(query);
     }
 
+    private void loadSavedOutfit() {
+        DBHelper dbHelper = new DBHelper(this);
+        SavedOutfitEntry savedOutfit = dbHelper.getLatestOutfit(username);
+        if (savedOutfit != null) {
+            outfitViewModel.setOutfitRecommendation(savedOutfit.getOutfit());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        // Intentar cargar outfit guardado si no estamos forzando recarga
-        if (!forceReload) {
-            boolean outfitLoaded = outfitViewModel.loadSavedOutfit(this);
-
-            // Si no hay outfit guardado o si se forzó la recarga, cargar datos del clima
-            if (!outfitLoaded && forceReload) {
-                forceReload = false;
-                loadWeatherData();
-            }
-        } else {
-            // Si se forzó la recarga, cargar datos del clima
+        if (forceReload) {
             forceReload = false;
             loadWeatherData();
         }
+        // Eliminar la carga automática del outfit guardado
     }
 
     @Override

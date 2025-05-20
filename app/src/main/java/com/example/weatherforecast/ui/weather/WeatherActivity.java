@@ -22,6 +22,7 @@ import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.model.WeatherCache;
 import com.example.weatherforecast.ui.NavigationManager;
 import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
@@ -47,10 +48,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     private ProgressBar progressBar;
     private static final int CACHE_MAX_AGE_MINUTES = 30; // Cache válido por 30 minutos
 
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+
+        if (getIntent().hasExtra("username")) {
+            username = getIntent().getStringExtra("username");
+        } else {
+            // Redireccionar a login si no hay usuario
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         // Inicializar caché
         weatherCache = new WeatherCache(this);
@@ -123,8 +136,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
                 findViewById(R.id.weatherEmoji),
                 findViewById(R.id.temperatureText),
                 findViewById(R.id.weatherConditionText),
-                findViewById(R.id.maxTempText),
-                findViewById(R.id.minTempText),
                 findViewById(R.id.weatherSummaryText),
                 findViewById(R.id.humidityText)
         );
@@ -178,6 +189,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(WeatherActivity.this, "Configuración", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(WeatherActivity.this, SettingsActivity.class);
+            intent.putExtra("username", username);
             startActivity(intent);
         });
     }

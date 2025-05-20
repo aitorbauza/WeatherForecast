@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.weatherforecast.R;
+import com.example.weatherforecast.data.DBHelper;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -19,7 +20,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextConfirmPassword;
     private Button buttonRegister;
     private TextView textViewLogin;
-//    private DBHelper dbHelper;
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.register_activity);
 
         // Inicializar la base de datos
-//        dbHelper = new DBHelper(this);
+        dbHelper = new DBHelper(this);
 
         // Encontrar los elementos de la interfaz
         editTextRegUsername = findViewById(R.id.editTextRegUsername);
@@ -58,9 +59,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 // Intenta registrar el usuario en la base de datos
-//                boolean success = dbHelper.registerUser(username, password);
+                boolean success = dbHelper.registerUser(username, password);
 
-                if (true) { //success
+                if (success) {
                     Toast.makeText(RegisterActivity.this, "Registro exitoso",
                             Toast.LENGTH_SHORT).show();
                     // Regresar a la pantalla de login

@@ -21,7 +21,7 @@ public class OutfitViewModel extends ViewModel {
     private final MutableLiveData<OutfitRecommendation> outfitRecommendation = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private CurrentWeather currentWeather;
+    private final MutableLiveData<CurrentWeather> currentWeather = new MutableLiveData<>();
     private OutfitRecommendation.Style selectedStyle = OutfitRecommendation.Style.CASUAL; // Estilo predeterminado
     private PreferencesRepository preferencesRepository;
 
@@ -30,13 +30,17 @@ public class OutfitViewModel extends ViewModel {
     private final MutableLiveData<String> ratingMessage = new MutableLiveData<>("Buena elección, tu confort con este outfit será de un 100%");
 
 
-    public OutfitViewModel(Context context) {
+    public OutfitViewModel(Context context, String username) {
         this.outfitService = new OutfitService();
-        this.preferencesRepository = new PreferencesRepository(context);
+        this.preferencesRepository = new PreferencesRepository(context, username);
+        loadSavedOutfit(context);
     }
 
     public LiveData<OutfitRecommendation> getOutfitRecommendation() {
-        return outfitRecommendation;
+    return outfitRecommendation;
+    }
+    public void setOutfitRecommendation(OutfitRecommendation recommendation) {
+        outfitRecommendation.setValue(recommendation);
     }
 
     public LiveData<Boolean> isLoading() {
@@ -47,8 +51,12 @@ public class OutfitViewModel extends ViewModel {
         return errorMessage;
     }
 
+    public LiveData<CurrentWeather> getCurrentWeather() {
+        return currentWeather;
+    }
+
     public void setCurrentWeather(CurrentWeather weather) {
-        this.currentWeather = weather;
+        currentWeather.setValue(weather);
     }
 
     public void setSelectedStyle(OutfitRecommendation.Style style) {
@@ -75,7 +83,7 @@ public class OutfitViewModel extends ViewModel {
 
             // Pasar las preferencias al servicio
             OutfitRecommendation recommendation =
-                    outfitService.getOutfitRecommendation(currentWeather, selectedStyle, userPreferences);
+                    outfitService.getOutfitRecommendation(currentWeather.getValue(), selectedStyle, userPreferences);
 
             // Guardar el outfit original para comparar más tarde
             saveOriginalOutfit(recommendation);
@@ -94,20 +102,17 @@ public class OutfitViewModel extends ViewModel {
 
     // Método para cargar outfit guardado
     public boolean loadSavedOutfit(Context context) {
-
+        // Aquí solo verificamos si existe un outfit guardado, pero no lo mostramos
         OutfitRecommendation savedOutfit = preferencesRepository.getSavedOutfit(context);
-        if (savedOutfit != null) {
-            outfitRecommendation.setValue(savedOutfit);
-            return true;
-        }
-        return false;
+        return savedOutfit != null;
+        // No hacemos: outfitRecommendation.setValue(savedOutfit);
     }
 
     public boolean saveCustomizedOutfit(OutfitRecommendation outfit, Context context) {
         try {
             // Guardar con la fecha actual
             Date currentDate = new Date();
-            preferencesRepository.saveOutfit(outfit, currentWeather, currentDate, context);
+            preferencesRepository.saveOutfit(outfit, currentWeather.getValue(), currentDate, context);
             return true;
         } catch (Exception e) {
             errorMessage.setValue("Error al guardar outfit: " + e.getMessage());
@@ -213,4 +218,5 @@ public class OutfitViewModel extends ViewModel {
 
         ratingMessage.setValue(message);
     }
+
 }

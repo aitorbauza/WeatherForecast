@@ -23,14 +23,12 @@ import java.util.List;
 
 public class RouteWeatherActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    // UI components
     private TextInputEditText editOrigin;
     private TextInputEditText editDestination;
     private Button btnSearchRoute;
     private TextView weatherSummaryText;
     private BottomNavigationView bottomNavigation;
 
-    // Managers
     private RouteManager routeManager;
     private MapManager mapManager;
     private WeatherRouteManager weatherRouteManager;
