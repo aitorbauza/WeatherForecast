@@ -1,151 +1,131 @@
-# Estructura del Proyecto
+# WEARTHER - AITOR BAUZÁ GÓMEZ
 
-El proyecto está organizado en una estructura de paquetes Java que sigue un patrón de arquitectura en capas con separación clara de responsabilidades. A continuación se detalla cada módulo y las clases que lo componen:
-
----
-
-## Módulo: `controller`
-
-Este módulo contiene los controladores que manejan las solicitudes y coordinan la lógica de negocio.
-
-- **`WeatherController`**: Gestiona las solicitudes relacionadas con el clima, actuando como intermediario entre la interfaz de usuario y los servicios de datos meteorológicos.
+## Descripción General
+Esta aplicación proporciona pronósticos del tiempo y recomendaciones de vestimenta basadas en condiciones meteorológicas. Permite a los usuarios consultar el clima actual, previsiones horarias y diarias, y recibir sugerencias de vestimenta apropiada. Además, incluye funcionalidades para planificar rutas considerando las condiciones meteorológicas.
 
 ---
 
-## Módulo: `data`
+## Estructura del Proyecto
 
-Este módulo maneja la persistencia y el acceso a datos, tanto locales como remotos.
+**Paquete raíz:** `com.example.weatherforecast`
 
-- **`DBHelper`**: Proporciona funcionalidades para interactuar con la base de datos local, maneja conexiones, consultas y actualizaciones.
+### controller
+Maneja las solicitudes de los usuarios y coordina la comunicación entre la interfaz y las capas de servicio.
 
----
+- `WeatherController`: Gestiona las peticiones relacionadas con el clima, procesa entradas del usuario y devuelve respuestas formateadas.
 
-## Módulo: `dto` (Data Transfer Objects)
+### data
+Gestiona el acceso y persistencia de datos.
 
-Este módulo contiene objetos que encapsulan datos para transferirlos entre subsistemas.
+- `DBHelper`: Facilita la conexión y operaciones con la base de datos.
+- `WeatherCache`: Implementa un sistema de caché para almacenar temporalmente datos meteorológicos y reducir llamadas a API externas.
 
-- **`ForecastResponse`**: Encapsula la respuesta de pronóstico completo recibida de servicios externos o generada internamente.
-- **`WeatherResponse`**: Encapsula los datos de respuesta relacionados con condiciones meteorológicas actuales.
+### dto (Data Transfer Objects)
+Objetos para transferir datos entre subsistemas de la aplicación.
 
----
+- `ForecastResponse`: Encapsula los datos de pronóstico para transferir entre capas.
+- `WeatherResponse`: Estructura los datos de respuesta de clima actual para presentarlos al usuario.
 
-## Módulo: `model`
+### model
+Define las entidades principales del dominio de la aplicación.
 
-Este módulo contiene las entidades principales que representan el dominio de la aplicación.
+- `CurrentWeather`: Representa los datos del clima actual para una ubicación específica.
+- `DailyForecast`: Modela pronósticos meteorológicos por día.
+- `HourlyForecast`: Contiene previsiones meteorológicas por hora.
+- `OutfitRecommendation`: Representa sugerencias de vestimenta basadas en condiciones climáticas.
+- `RoutePoint`: Define puntos geográficos para planificación de rutas.
+- `SavedOutfitEntry`: Almacena combinaciones de vestimenta guardadas por el usuario.
+- `UserPreferences`: Contiene ajustes y preferencias configuradas por el usuario.
 
-- **`CurrentWeather`**: Representa las condiciones meteorológicas actuales en una ubicación específica.
-- **`DailyForecast`**: Modela el pronóstico del tiempo para un día completo.
-- **`HourlyForecast`**: Representa el pronóstico meteorológico en intervalos por hora.
-- **`OutfitImageMapper`**: Mapea condiciones meteorológicas a imágenes de prendas de vestir recomendadas.
-- **`OutfitRecommendation`**: Encapsula una recomendación de vestimenta basada en condiciones climáticas.
-- **`RoutePoint`**: Representa un punto geográfico en una ruta con información meteorológica asociada.
-- **`SavedOutfitEntry`**: Modela una entrada guardada de un conjunto de ropa para condiciones específicas.
-- **`UserPreferences`**: Almacena las preferencias del usuario relacionadas con la aplicación.
-- **`WeatherCache`**: Implementa un sistema de caché para datos meteorológicos para mejorar el rendimiento.
+### repository
+Implementa el patrón repositorio para abstraer y encapsular la lógica de acceso a datos.
 
----
+- `PreferencesRepository`: Maneja operaciones CRUD para las preferencias de usuario.
+- `WeatherRepository`: Gestiona el acceso a datos meteorológicos, ya sea desde caché local o API externa.
 
-## Módulo: `repository`
+### service
+Contiene la lógica de negocio principal de la aplicación.
 
-Este módulo implementa el patrón repositorio para abstraer el acceso a datos.
+- `ForecastProcessor`: Procesa datos brutos de pronóstico para extraer información relevante.
+- `OutfitDisplayHelper`: Ayuda a presentar recomendaciones de vestimenta en la interfaz.
+- `OutfitService`: Proporciona recomendaciones de vestimenta según condiciones climáticas.
+- `WeatherDataProcessor`: Procesa datos meteorológicos en bruto de diversas fuentes.
+- `WeatherService`: Servicio principal que coordina la obtención y procesamiento de datos meteorológicos.
+- `WeatherTranslator`: Convierte terminología y medidas meteorológicas entre diferentes sistemas o idiomas.
 
-- **`PreferencesRepository`**: Gestiona la persistencia y recuperación de las preferencias del usuario.
-- **`WeatherRepository`**: Maneja el acceso y almacenamiento de datos meteorológicos.
+### ui
+Contiene los componentes de interfaz de usuario.
 
----
+#### forms
+Componentes para autenticación de usuarios.
 
-## Módulo: `service`
+- `LoginActivity`: Maneja la interfaz y lógica de inicio de sesión.
+- `RegisterActivity`: Gestiona el registro de nuevos usuarios.
 
-Este módulo contiene la lógica de negocio principal de la aplicación.
+#### outfit
+Componentes para visualización y gestión de recomendaciones de vestimenta.
 
-- **`ForecastProcessor`**: Procesa datos de pronóstico meteorológico para extraer información relevante.
-- **`OutfitDisplayHelper`**: Proporciona funcionalidades para mostrar correctamente las recomendaciones de ropa.
-- **`OutfitRatingHelper`**: Gestiona la calificación de recomendaciones de vestimenta.
-- **`OutfitService`**: Servicio principal para generar y gestionar recomendaciones de ropa.
-- **`WeatherDataProcessor`**: Procesa datos meteorológicos crudos para su uso en la aplicación.
-- **`WeatherService`**: Servicio principal que proporciona acceso a datos meteorológicos.
-- **`WeatherTranslator`**: Traduce términos y descripciones meteorológicas entre diferentes idiomas.
+- `OutfitActivity`: Pantalla principal para mostrar recomendaciones de vestuario.
+- `OutfitCustomizeAdapter`: Adaptador para personalización de elementos de vestimenta.
+- `OutfitViewModel`: Modelo de vista que maneja la lógica de presentación para outfits.
+- `OutfitViewModelFactory`: Fábrica para crear instancias de `OutfitViewModel`.
 
----
+#### outfitcomparison
+Componentes para comparar diferentes opciones de vestimenta.
 
-## Módulo: `ui`
+- `OutfitComparisonActivity`: Interfaz para comparar diferentes conjuntos de ropa.
+- `OutfitComparisonViewModel`: Modelo de vista para la lógica de comparación.
+- `OutfitComparisonViewModelFactory`: Fábrica para crear instancias del modelo anterior.
 
-### Submódulo: `forms`
+#### route
+Gestión de rutas y su integración con información meteorológica.
 
-Contiene actividades relacionadas con la autenticación.
+- `MapManager`: Gestiona la visualización de mapas y puntos geográficos.
+- `RouteManager`: Administra la creación y edición de rutas.
+- `RouteWeatherActivity`: Muestra información meteorológica a lo largo de una ruta.
+- `WeatherRouteManager`: Integra datos de rutas con información meteorológica.
 
-- **`LoginActivity`**: Maneja la funcionalidad de inicio de sesión de usuarios.
-- **`RegisterActivity`**: Gestiona el registro de nuevos usuarios en la aplicación.
+#### settings
+Configuración de la aplicación.
 
-### Submódulo: `outfit`
+- `SettingsActivity`: Interfaz para modificar ajustes de la aplicación.
 
-Contiene clases relacionadas con la visualización de recomendaciones de ropa.
+#### weather
+Visualización de datos meteorológicos.
 
-- **`OutfitActivity`**: Actividad principal para mostrar recomendaciones de ropa.
-- **`OutfitCustomizeAdapter`**: Adaptador para personalizar la visualización de conjuntos de ropa.
-- **`OutfitViewModel`**: Modelo de vista que contiene la lógica de presentación para las recomendaciones de ropa.
-- **`OutfitViewModelFactory`**: Fábrica para crear instancias de `OutfitViewModel`.
+- `DailyForecastComponent`: Componente UI para mostrar pronósticos diarios.
+- `HourlyForecastComponent`: Componente UI para visualizar pronósticos horarios.
+- `LocationDialogManager`: Gestiona diálogos para selección de ubicaciones.
+- `LocationSuggestionTask`: Proporciona sugerencias de ubicación basadas en entrada del usuario.
+- `WeatherActivity`: Pantalla principal para visualizar información meteorológica.
+- `WeatherDisplayComponent`: Componente reutilizable para mostrar datos meteorológicos.
 
-### Submódulo: `outfitcomparison`
+### util
+Utilidades generales para la aplicación.
 
-Contiene clases para comparar diferentes conjuntos de ropa.
-
-- **`OutfitComparisonActivity`**: Actividad que permite comparar diferentes recomendaciones de ropa.
-- **`OutfitComparisonViewModel`**: Modelo de vista para la comparación de conjuntos.
-- **`OutfitComparisonViewModelFactory`**: Fábrica para crear instancias de `OutfitComparisonViewModel`.
-
-### Submódulo: `route`
-
-Contiene clases para gestionar rutas y mapas.
-
-- **`MapManager`**: Gestiona la visualización e interacción con mapas.
-- **`RouteManager`**: Administra las rutas del usuario y su información asociada.
-- **`RouteWeatherActivity`**: Actividad que muestra información meteorológica a lo largo de una ruta.
-- **`WeatherRouteManager`**: Integra información meteorológica con rutas geográficas.
-
-### Submódulo: `weather`
-
-Contiene componentes de UI relacionados con la visualización de datos meteorológicos.
-
-- **`DailyForecastComponent`**: Componente UI para mostrar pronósticos diarios.
-- **`HourlyForecastComponent`**: Componente UI para mostrar pronósticos por hora.
-- **`LocationDialogManager`**: Gestiona diálogos para selección y búsqueda de ubicaciones.
-- **`WeatherActivity`**: Actividad principal que muestra información meteorológica.
-- **`WeatherDisplayComponent`**: Componente UI para mostrar datos meteorológicos actuales.
-
----
-
-## Módulo: `util`
-
-Este módulo contiene clases de utilidad que proporcionan funcionalidades compartidas.
-
-- **`TimeUtils`**: Proporciona utilidades para manipulación y formateo de fechas y horas.
-- **`WeatherIconMapper`**: Mapea condiciones meteorológicas a iconos representativos.
+- `NavigationManager`: Gestiona la navegación entre diferentes pantallas.
+- `OutfitImageMapper`: Mapea condiciones climáticas a imágenes de vestimenta apropiadas.
+- `WeatherIconMapper`: Relaciona condiciones meteorológicas con iconos correspondientes.
+- `WeatherApplication`: Clase principal de la aplicación que inicializa componentes clave.
 
 ---
 
-## Componentes Adicionales
+## Flujo Principal
 
-- **`LocationSuggestionTask`**: Implementa la funcionalidad de sugerencias de ubicación durante la búsqueda.
-- **`NavigationManager`**: Gestiona la navegación entre diferentes pantallas de la aplicación.
-- **`SettingsActivity`**: Actividad que permite al usuario configurar las preferencias de la aplicación.
-- **`WeatherApplication`**: Clase principal de la aplicación que inicializa componentes esenciales.
-
----
-
-# Descripción Funcional
-
-Esta aplicación combina pronósticos meteorológicos con recomendaciones de vestimenta, permitiendo a los usuarios:
-
-- Consultar condiciones meteorológicas actuales y pronósticos.
-- Recibir recomendaciones de ropa basadas en las condiciones climáticas.
-- Guardar y personalizar conjuntos de ropa para diferentes condiciones.
-- Visualizar información meteorológica a lo largo de rutas planificadas.
-- Comparar diferentes recomendaciones de vestimenta.
-- Establecer preferencias personales para adaptar recomendaciones.
+1. El usuario inicia sesión o se registra a través de las actividades en el paquete `ui.forms`.
+2. La interfaz principal (`WeatherActivity`) muestra información meteorológica actual obtenida mediante `WeatherService`.
+3. Los usuarios pueden:
+   - Ver pronósticos horarios y diarios mediante los componentes especializados.
+   - Recibir recomendaciones de vestimenta a través de `OutfitService`.
+   - Planificar rutas considerando el clima con `RouteWeatherActivity`.
+   - Personalizar sus preferencias usando `SettingsActivity`.
 
 ---
 
-## Arquitectura
+## Características Principales
 
-La arquitectura sigue un patrón **MVVM** (Model-View-ViewModel) para la capa de presentación, con **repositorios** para abstraer el acceso a datos y **servicios** para encapsular la lógica de negocio, proporcionando una aplicación **modular, escalable y mantenible**.
+- Pronósticos meteorológicos detallados (actuales, horarios y diarios).
+- Recomendaciones de vestimenta basadas en condiciones climáticas.
+- Planificación de rutas con integración de información meteorológica.
+- Sistema de caché para optimizar el rendimiento y reducir el consumo de datos.
+- Personalización de preferencias del usuario.
