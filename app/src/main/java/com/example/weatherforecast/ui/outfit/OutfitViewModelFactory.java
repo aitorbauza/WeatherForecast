@@ -21,7 +21,7 @@ public class OutfitViewModelFactory implements ViewModelProvider.Factory {
     }
 
     @NonNull
-    @Override
+    @Override // <T> significa que la clase generada puede ser de cualquier tipo
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(OutfitViewModel.class)) {
             return (T) new OutfitViewModel(context, username);

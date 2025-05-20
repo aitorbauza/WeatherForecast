@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.data.DBHelper;
 
+/**
+ * Clase encargada de manejar el registro de usuarios
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText editTextRegUsername;
@@ -27,17 +30,15 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_activity);
 
-        // Inicializar la base de datos
+        // Inicializa la base de datos
         dbHelper = new DBHelper(this);
 
-        // Encontrar los elementos de la interfaz
         editTextRegUsername = findViewById(R.id.editTextRegUsername);
         editTextRegPassword = findViewById(R.id.editTextRegPassword);
         editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
         buttonRegister = findViewById(R.id.buttonRegister);
         textViewLogin = findViewById(R.id.textViewLogin);
 
-        // Configurar el botón de registro
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,15 +76,15 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        // Configurar el texto para ir a inicio de sesión
         textViewLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Ir a la pantalla de inicio de sesión
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
-                finish(); // Cerrar esta actividad
+                finish();
             }
         });
     }
+
 }

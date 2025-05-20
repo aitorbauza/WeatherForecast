@@ -27,6 +27,7 @@ public class WeatherRepository {
         apiService = retrofit.create(WeatherApiService.class);
     }
 
+    // Units se encarga de devolver la temperatura en Celsius
     public Call<WeatherResponse> getCurrentWeather(String city) {
         return apiService.getCurrentWeather(city, "metric", API_KEY);
     }

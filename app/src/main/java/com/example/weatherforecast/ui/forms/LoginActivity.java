@@ -1,6 +1,5 @@
 package com.example.weatherforecast.ui.forms;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +14,9 @@ import com.example.weatherforecast.R;
 import com.example.weatherforecast.data.DBHelper;
 import com.example.weatherforecast.ui.weather.WeatherActivity;
 
+/**
+ * Clase encargada de manejar el inicio de sesión
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText editTextUsername;
@@ -28,16 +30,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
-        // Inicializar la base de datos
+        // Inicializa la base de datos
         dbHelper = new DBHelper(this);
 
-        // Encontrar los elementos de la interfaz
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonLogin = findViewById(R.id.buttonLogin);
         textViewRegister = findViewById(R.id.textViewRegister);
 
-        // Configurar el botón de inicio de sesión
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,11 +54,10 @@ public class LoginActivity extends AppCompatActivity {
                         // Registrar el inicio de sesión
                         dbHelper.recordLogin(username);
 
-                        // Ir a la pantalla de juegos
                         Intent intent = new Intent(LoginActivity.this, WeatherActivity.class);
                         intent.putExtra("username", username);
                         startActivity(intent);
-                        finish(); // Opcional: cerrar la actividad de login
+                        finish();
                     } else {
                         Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos",
                                 Toast.LENGTH_SHORT).show();
@@ -76,4 +75,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }

@@ -43,6 +43,7 @@ public class WeatherService {
     }
 
     // Interfaz para callbacks cuando se cargan los datos del clima
+    // Los callbacks sirven para notificar a la vista cuando se cargan los datos
     public interface WeatherCallback {
 
         void onWeatherLoaded(CurrentWeather currentWeather);

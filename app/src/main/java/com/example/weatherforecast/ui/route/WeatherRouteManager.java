@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Responsible for weather-related operations along a route
+ * Clase encargada de gestionar la obtención del clima para cada punto de la ruta
  */
 public class WeatherRouteManager {
 
@@ -35,44 +35,40 @@ public class WeatherRouteManager {
         return weatherPointsLiveData;
     }
 
+    // Método para procesar la ruta y obtener el clima
     public void processRouteWeather(List<LatLng> routePoints, double distanceInKm, String originName, String destinationName) {
         executorService.execute(() -> {
-            // Calculate checkpoints based on route characteristics
             List<RoutePoint> checkpoints = calculateWeatherCheckpoints(
                     routePoints, distanceInKm, originName, destinationName);
 
-            // Fetch weather for each checkpoint in parallel
             fetchWeatherForCheckpoints(checkpoints);
         });
     }
 
+    // Método para calcular los puntos de control del clima, que son: origen, medio, destino
     private List<RoutePoint> calculateWeatherCheckpoints(
             List<LatLng> routePoints, double distanceInKm, String originName, String destinationName) {
 
         List<RoutePoint> checkpoints = new ArrayList<>();
         int totalPoints = routePoints.size();
 
-        // Ensure we have enough points
         if (totalPoints < 2) {
             return checkpoints;
         }
 
-        // First point (origin)
+        // Origen
         RoutePoint originPoint = new RoutePoint(
                 routePoints.get(0), 0, originName);
         checkpoints.add(originPoint);
 
-        // Limit the number of checkpoints based on route length
-        // to avoid overwhelming the app with API calls
+        // Origen, 50%, Destino
         if (distanceInKm <= 50) {
-            // For short routes: origin, middle, destination
             if (totalPoints > 2) {
                 int midIndex = totalPoints / 2;
                 checkpoints.add(new RoutePoint(
                         routePoints.get(midIndex), 50, "Intermedio"));
-            }
+            } // Origen, 33%, 66%, Destino
         } else if (distanceInKm <= 300) {
-            // For medium routes: origin, 33%, 66%, destination
             if (totalPoints > 3) {
                 int firstThird = totalPoints / 3;
                 int secondThird = 2 * firstThird;
@@ -83,7 +79,7 @@ public class WeatherRouteManager {
                         routePoints.get(secondThird), 66, "Punto 2"));
             }
         } else {
-            // For long routes: origin, 25%, 50%, 75%, destination
+            // Origen, 25%, 50%, 75%, Destino
             if (totalPoints > 4) {
                 int quarter = totalPoints / 4;
                 int half = totalPoints / 2;
@@ -98,7 +94,7 @@ public class WeatherRouteManager {
             }
         }
 
-        // Last point (destination)
+        // Destino
         RoutePoint destinationPoint = new RoutePoint(
                 routePoints.get(totalPoints - 1), 100, destinationName);
         checkpoints.add(destinationPoint);
@@ -106,15 +102,17 @@ public class WeatherRouteManager {
         return checkpoints;
     }
 
+    // Método que obtiene el clima para cada punto de control
     private void fetchWeatherForCheckpoints(List<RoutePoint> checkpoints) {
-        // Use AtomicInteger to track completed requests
+
+        //AtomicInteger sirve para manejar el número de peticiones en paralelo, ya que el clima puede tardar en cargar
         AtomicInteger completedRequests = new AtomicInteger(0);
         int totalCheckpoints = checkpoints.size();
 
-        // Create mutable copy for updates
         List<RoutePoint> updatedCheckpoints = new ArrayList<>(checkpoints);
 
-        // Process each checkpoint in parallel using a thread pool
+        // Lo procesa en paralelo cono PoolThread para no saturar la memoria
+        // PoolThread se encarga de manejar las peticiones en paralelo
         for (int i = 0; i < checkpoints.size(); i++) {
             final int index = i;
             RoutePoint point = checkpoints.get(index);
@@ -125,7 +123,8 @@ public class WeatherRouteManager {
                     new WeatherService.LocationWeatherCallback() {
                         @Override
                         public void onWeatherLoaded(String locationName, double temperature, String condition, String icon) {
-                            // Update point with weather data
+
+                            // Si la respuesta no es nula, actualiza el clima
                             if (locationName != null && !locationName.isEmpty()) {
                                 updatedCheckpoints.get(index).setLocationName(locationName);
                                 updatedCheckpoints.get(index).setTemperature(temperature);
@@ -133,28 +132,30 @@ public class WeatherRouteManager {
                                 updatedCheckpoints.get(index).setWeatherIcon(icon);
                             }
 
-                            // Check if all requests have completed
                             checkRequestsCompletion(completedRequests, totalCheckpoints, updatedCheckpoints);
                         }
 
                         @Override
                         public void onError(String message) {
-                            // Handle error but still count as completed
                             checkRequestsCompletion(completedRequests, totalCheckpoints, updatedCheckpoints);
                         }
                     });
         }
     }
 
+    // Método para verificar si todas las peticiones han terminado
     private void checkRequestsCompletion(AtomicInteger completedRequests, int totalCheckpoints, List<RoutePoint> updatedCheckpoints) {
         if (completedRequests.incrementAndGet() == totalCheckpoints) {
-            // Ensure UI updates happen on the main thread
+
+            // Handler con android.os.Looper.getMainLooper()).post sirve para ejecutar en el hilo principal
             new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
                 weatherPointsLiveData.setValue(new ArrayList<>(updatedCheckpoints));
             });
         }
     }
 
+    // Método para apagar el ExecutorService
+    // ExecutorService se utiliza para manejar las peticiones en paralelo
     public void shutdown() {
         if (executorService != null && !executorService.isShutdown()) {
             try {
@@ -165,4 +166,5 @@ public class WeatherRouteManager {
             }
         }
     }
+
 }

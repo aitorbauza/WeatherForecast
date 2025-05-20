@@ -8,6 +8,7 @@ import com.example.weatherforecast.model.HourlyForecast;
 import com.example.weatherforecast.service.WeatherService;
 
 import java.util.List;
+
 /**
  * Controlador que se encarga de cargar y mostrar datos del clima.
  */

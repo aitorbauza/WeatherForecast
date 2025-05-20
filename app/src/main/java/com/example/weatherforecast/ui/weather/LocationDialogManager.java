@@ -13,13 +13,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.weatherforecast.R;
-import com.example.weatherforecast.ui.LocationSuggestionTask;
 
 import java.util.ArrayList;
 
 /**
- * Component responsible for managing location search dialog.
- * Follows Single Responsibility Principle by handling only location dialog logic.
+ * Manager encargado de gestionar la visualización del diálogo de búsqueda de ubicación
  */
 public class LocationDialogManager {
     private final Context context;
@@ -34,9 +32,7 @@ public class LocationDialogManager {
         this.listener = listener;
     }
 
-    /**
-     * Shows dialog for location search with autocomplete functionality
-     */
+    // Método que muestra el diálogo de búsqueda de ubicación
     public void showLocationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_location_search, null);
@@ -45,7 +41,7 @@ public class LocationDialogManager {
         AutoCompleteTextView autoCompleteTextView = dialogView.findViewById(R.id.autoCompleteLocation);
         ImageButton btnApply = dialogView.findViewById(R.id.btnApplyLocation);
 
-        // Adapter for autocomplete
+        // Adapter para mostrar las sugerencias de ubicación
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line,
                 new ArrayList<>());
@@ -54,7 +50,6 @@ public class LocationDialogManager {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        // Configure apply button
         btnApply.setOnClickListener(v -> {
             String newLocation = autoCompleteTextView.getText().toString().trim();
             if (!newLocation.isEmpty()) {
@@ -65,7 +60,7 @@ public class LocationDialogManager {
             }
         });
 
-        // Configure text watcher for autocomplete
+        // TextWatcher para manejar los cambios en el campo de texto
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -73,7 +68,7 @@ public class LocationDialogManager {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 2) {
-                    // Search for city suggestions when there are at least 3 characters
+                    // En el momento en el que hay más de 2 caracteres, se realiza la búsqueda
                     searchLocationSuggestions(s.toString(), adapter);
                 }
             }
@@ -83,9 +78,7 @@ public class LocationDialogManager {
         });
     }
 
-    /**
-     * Search for location suggestions based on query
-     */
+    // Método para buscar sugerencias de ubicación
     private void searchLocationSuggestions(String query, ArrayAdapter<String> adapter) {
         new LocationSuggestionTask(adapter).execute(query);
     }

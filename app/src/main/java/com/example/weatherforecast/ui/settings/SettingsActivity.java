@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.ui.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,16 +69,11 @@ public class SettingsActivity extends AppCompatActivity {
         setupToolbar();
     }
 
-    /**
-     * Inicializa el repositorio de preferencias.
-     */
+    // Inicializa el repositorio de preferencias
     private void initRepository() {
         preferencesRepository = new PreferencesRepository(this, username);
     }
 
-    /**
-     * Inicializa las referencias a las vistas.
-     */
     private void initViews() {
         nameEditText = findViewById(R.id.nameEditText);
         surnameEditText = findViewById(R.id.surnameEditText);
@@ -92,9 +87,6 @@ public class SettingsActivity extends AppCompatActivity {
         viewOutfitButton = findViewById(R.id.viewOutfitButton);
     }
 
-    /**
-     * Inicializa la barra de herramientas.
-     */
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,21 +99,17 @@ public class SettingsActivity extends AppCompatActivity {
                 .into(toolbarLogo);
     }
 
-    /**
-     * Carga las preferencias del usuario desde el repositorio.
-     */
+
+    // Método que carga las preferencias del usuario
     private void loadPreferences() {
         // Get user preferences from DB with username
         originalPreferences = preferencesRepository.getUserPreferences(username);
         currentPreferences = originalPreferences.copy();
 
-        // Update UI
         updateUIFromPreferences();
     }
 
-    /**
-     * Actualiza la interfaz con las preferencias cargadas.
-     */
+    // Método que actualiza la UI con las preferencias actuales
     private void updateUIFromPreferences() {
         nameEditText.setText(currentPreferences.getName());
         surnameEditText.setText(currentPreferences.getSurname());
@@ -171,13 +159,10 @@ public class SettingsActivity extends AppCompatActivity {
         }
         heatToleranceRadioGroup.check(heatToleranceId);
 
-        // Actualizar estado del botón de guardar
         updateSaveButtonState();
     }
 
-    /**
-     * Configura los listeners para los componentes de la UI.
-     */
+
     private void setupListeners() {
         // TextWatcher para los campos de texto
         TextWatcher textWatcher = new TextWatcher() {
@@ -205,7 +190,6 @@ public class SettingsActivity extends AppCompatActivity {
         nameEditText.addTextChangedListener(textWatcher);
         surnameEditText.addTextChangedListener(textWatcher);
 
-        // Listener para el RadioGroup de género
         genderRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             UserPreferences.Gender gender;
 
@@ -221,7 +205,6 @@ public class SettingsActivity extends AppCompatActivity {
             updateSaveButtonState();
         });
 
-        // Listener para el RadioGroup de tolerancia al frío
         coldToleranceRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             UserPreferences.Tolerance tolerance;
 
@@ -237,7 +220,6 @@ public class SettingsActivity extends AppCompatActivity {
             updateSaveButtonState();
         });
 
-        // Listener para el RadioGroup de tolerancia al calor
         heatToleranceRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             UserPreferences.Tolerance tolerance;
 
@@ -255,27 +237,20 @@ public class SettingsActivity extends AppCompatActivity {
 
         viewOutfitButton.setOnClickListener(v -> goToOutfitScreen());
 
-        // Listener para el botón de guardar
         saveButton.setOnClickListener(v -> savePreferences());
 
-        // Listener para el botón de restablecer
         resetButton.setOnClickListener(v -> resetPreferences());
 
-        // Listener para el botón de inicio
         homeButton.setOnClickListener(v -> navigateToHome());
     }
 
-    /**
-     * Actualiza el estado del botón de guardar según si hay cambios.
-     */
+    // Método que actualiza el estado del botón de guardar
     private void updateSaveButtonState() {
         boolean hasChanges = !currentPreferences.equals(originalPreferences);
         saveButton.setEnabled(hasChanges);
     }
 
-    /**
-     * Guarda las preferencias actuales.
-     */
+    // Método que guarda las preferencias del usuario
     private void savePreferences() {
         preferencesRepository.saveUserPreferences(currentPreferences, username);
         originalPreferences = currentPreferences.copy();
@@ -289,9 +264,6 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
-     * Restablece las preferencias a los valores predeterminados.
-     */
     private void resetPreferences() {
         // Crear una nueva instancia de preferencias predeterminadas
         currentPreferences = new UserPreferences();
@@ -304,9 +276,6 @@ public class SettingsActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.settings_reset_message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Navega a la pantalla principal.
-     */
     private void navigateToHome() {
         Intent intent = new Intent(this, WeatherActivity.class);
         intent.putExtra("username", username);
@@ -321,4 +290,5 @@ public class SettingsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

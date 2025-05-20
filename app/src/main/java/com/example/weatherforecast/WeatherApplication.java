@@ -5,7 +5,7 @@ import android.app.Application;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
-import com.example.weatherforecast.model.WeatherCache;
+import com.example.weatherforecast.data.WeatherCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,10 +87,6 @@ public class WeatherApplication extends Application {
         weatherCache.saveDailyForecast(dailyForecasts);
     }
 
-    /**
-     * Obtiene la instancia de la caché del clima
-     * @return La instancia de WeatherCache
-     */
     public WeatherCache getWeatherCache() {
         return weatherCache;
     }

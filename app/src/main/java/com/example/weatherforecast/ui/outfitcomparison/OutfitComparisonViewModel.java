@@ -42,6 +42,7 @@ public class OutfitComparisonViewModel extends ViewModel {
         }
     }
 
+    // Igual que loadFirstOutfitByDate pero para el segundo outfit
     public void loadSecondOutfitByDate(Date date, Context context) {
         DBHelper dbHelper = new DBHelper(context);
         SavedOutfitEntry outfitEntry = dbHelper.getOutfitByDate(username, date);
@@ -64,10 +65,10 @@ public class OutfitComparisonViewModel extends ViewModel {
     public LiveData<String> getErrorMessage() {
         return errorMessage;
     }
+
     public void setErrorMessage(String message) {
         errorMessage.setValue(message);
     }
-
     public void setUsername(String username) {
         this.username = username;
     }

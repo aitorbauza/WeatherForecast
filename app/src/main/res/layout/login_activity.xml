@@ -162,7 +162,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Texto de registro centrado -->
         <TextView
             android:id="@+id/textViewRegister"
             android:layout_width="match_parent"

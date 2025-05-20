@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * ViewModel encargado de gestionar la lógica de la aplicación relacionada con la recomendación de outfit
+ */
 public class OutfitViewModel extends ViewModel {
     private final OutfitService outfitService;
     private final MutableLiveData<OutfitRecommendation> outfitRecommendation = new MutableLiveData<>();
@@ -26,9 +29,10 @@ public class OutfitViewModel extends ViewModel {
     private PreferencesRepository preferencesRepository;
 
     private OutfitRecommendation originalOutfit;
+    // Variables para la puntuación de confort
+    //MutableLiveData sirve para notificar a los observadores cuando cambia el valor
     private final MutableLiveData<Integer> comfortRating = new MutableLiveData<>(100);
     private final MutableLiveData<String> ratingMessage = new MutableLiveData<>("Buena elección, tu confort con este outfit será de un 100%");
-
 
     public OutfitViewModel(Context context, String username) {
         this.outfitService = new OutfitService();
@@ -50,7 +54,6 @@ public class OutfitViewModel extends ViewModel {
     public LiveData<String> getErrorMessage() {
         return errorMessage;
     }
-
     public LiveData<CurrentWeather> getCurrentWeather() {
         return currentWeather;
     }
@@ -58,7 +61,6 @@ public class OutfitViewModel extends ViewModel {
     public void setCurrentWeather(CurrentWeather weather) {
         currentWeather.setValue(weather);
     }
-
     public void setSelectedStyle(OutfitRecommendation.Style style) {
         this.selectedStyle = style;
     }
@@ -66,10 +68,21 @@ public class OutfitViewModel extends ViewModel {
     public OutfitRecommendation.Style getSelectedStyle() {
         return selectedStyle;
     }
+    public void setCustomizedOutfit(OutfitRecommendation customizedOutfit) {
+        outfitRecommendation.setValue(customizedOutfit);
+    }
 
-    /**
-     * Genera una recomendación de outfit según el clima actual y el estilo seleccionado
-     */
+    // Getter para la puntuación de confort
+    public LiveData<Integer> getComfortRating() {
+        return comfortRating;
+    }
+
+    // Getter para el mensaje de calificación
+    public LiveData<String> getRatingMessage() {
+        return ratingMessage;
+    }
+
+    // Método que se encarga de cargar la recomendación de outfit
     public void loadOutfitRecommendation() {
         if (currentWeather == null) {
             errorMessage.setValue("No hay datos meteorológicos disponibles");
@@ -96,38 +109,12 @@ public class OutfitViewModel extends ViewModel {
         }
     }
 
-    public void setCustomizedOutfit(OutfitRecommendation customizedOutfit) {
-        outfitRecommendation.setValue(customizedOutfit);
-    }
-
     // Método para cargar outfit guardado
     public boolean loadSavedOutfit(Context context) {
         // Aquí solo verificamos si existe un outfit guardado, pero no lo mostramos
         OutfitRecommendation savedOutfit = preferencesRepository.getSavedOutfit(context);
         return savedOutfit != null;
         // No hacemos: outfitRecommendation.setValue(savedOutfit);
-    }
-
-    public boolean saveCustomizedOutfit(OutfitRecommendation outfit, Context context) {
-        try {
-            // Guardar con la fecha actual
-            Date currentDate = new Date();
-            preferencesRepository.saveOutfit(outfit, currentWeather.getValue(), currentDate, context);
-            return true;
-        } catch (Exception e) {
-            errorMessage.setValue("Error al guardar outfit: " + e.getMessage());
-            return false;
-        }
-    }
-
-    // Getter para la puntuación de confort
-    public LiveData<Integer> getComfortRating() {
-        return comfortRating;
-    }
-
-    // Getter para el mensaje de calificación
-    public LiveData<String> getRatingMessage() {
-        return ratingMessage;
     }
 
     // Guarda el outfit original generado
@@ -177,7 +164,7 @@ public class OutfitViewModel extends ViewModel {
             differences++;
         }
 
-        // Calcula el porcentaje (cada diferencia resta un 20%)
+        // Por cada prenda diferente a la inicial, baja un 20%
         int rating = Math.max(0, 100 - (differences * 20));
         comfortRating.setValue(rating);
 
@@ -205,15 +192,15 @@ public class OutfitViewModel extends ViewModel {
         String message;
 
         if (rating >= 80) {
-            message = "¡Excelente elección! Tu confort con este outfit será de un " + rating + "%";
+            message = "¡Excelente elección! \n Tu confort con este outfit será de un " + rating + "%";
         } else if (rating >= 60) {
-            message = "Buena elección. Tu confort con este outfit será de un " + rating + "%";
+            message = "Buena elección. \n Tu confort con este outfit será de un " + rating + "%";
         } else if (rating >= 40) {
-            message = "Elección aceptable. Tu confort con este outfit será de un " + rating + "%";
+            message = "Elección aceptable. \n Tu confort con este outfit será de un " + rating + "%";
         } else if (rating >= 20) {
-            message = "Podrías reconsiderar algunas prendas. Tu confort será de un " + rating + "%";
+            message = "Podrías reconsiderar algunas prendas. \n Tu confort será de un " + rating + "%";
         } else {
-            message = "Este outfit podría no ser muy confortable. Tu confort será de un " + rating + "%";
+            message = "Este outfit podría no ser muy confortable. \n Tu confort será de un " + rating + "%";
         }
 
         ratingMessage.setValue(message);

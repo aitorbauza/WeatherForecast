@@ -35,7 +35,6 @@ public class ForecastProcessor {
 
         // Obtener la hora actual
         Calendar currentCal = Calendar.getInstance();
-        int currentHour = currentCal.get(Calendar.HOUR_OF_DAY);
 
         // Filtrar pronóstico por hora
         try {

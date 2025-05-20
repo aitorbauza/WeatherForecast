@@ -18,6 +18,7 @@ import java.util.Locale;
  * Clase encargada de gestionar el almacenamiento y recuperación de las preferencias del usuario.
  */
 public class PreferencesRepository {
+    // Variables contatantes encargadas de guardar el nombre de las preferencias para cada usuario
     private static final String PREFS_NAME_BASE = "weather_app_preferences_";
     private final String userSpecificPrefsName;
     private static final String KEY_NAME = "user_name";
@@ -37,11 +38,12 @@ public class PreferencesRepository {
         this.context = context;
     }
 
+    // Método que obtiene las preferencias del usuario
     public UserPreferences getUserPreferences(String username) {
         return dbHelper.getUserPreferences(username);
     }
 
-    // Método que guarda las preferencias del usuario
+    // Método que guarda las preferencias del usuario en la base de datos
     public boolean saveUserPreferences(UserPreferences userPreferences, String username) {
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -126,26 +128,6 @@ public class PreferencesRepository {
         // Guardar la entrada asociada a su fecha
         editor.putString("outfit_" + dateKey, entryJson);
         editor.apply();
-    }
-
-    public SavedOutfitEntry getOutfitByDate(Date date, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("OutfitPrefs", Context.MODE_PRIVATE);
-
-        // Formatear la fecha como clave
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String dateKey = dateFormat.format(date);
-
-        String entryJson = prefs.getString("outfit_" + dateKey, null);
-
-        if (entryJson != null) {
-            try {
-                Gson gson = new Gson();
-                return gson.fromJson(entryJson, SavedOutfitEntry.class);
-            } catch (Exception e) {
-                return null;
-            }
-        }
-        return null;
     }
 
 }

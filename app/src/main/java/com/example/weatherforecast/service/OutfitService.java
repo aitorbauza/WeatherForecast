@@ -7,7 +7,6 @@ import com.example.weatherforecast.model.UserPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Clase encargada de generar una recomendación de outfit basado en el clima actual,
  * el estilo seleccionado y las preferencias del usuario

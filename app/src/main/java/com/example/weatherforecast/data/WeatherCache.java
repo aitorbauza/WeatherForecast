@@ -1,8 +1,11 @@
-package com.example.weatherforecast.model;
+package com.example.weatherforecast.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.weatherforecast.model.CurrentWeather;
+import com.example.weatherforecast.model.DailyForecast;
+import com.example.weatherforecast.model.HourlyForecast;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

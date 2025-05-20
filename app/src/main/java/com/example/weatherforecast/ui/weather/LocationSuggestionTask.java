@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.ui.weather;
 
 import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
@@ -14,6 +14,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase que gestiona las sugerencias de ubicación
+ */
 public class LocationSuggestionTask extends AsyncTask<String, Void, List<String>> {
     private static final String GEOCODING_API_URL = "https://api.openweathermap.org/geo/1.0/direct";
     private static final String API_KEY = "fd55aeb51961a4033188497fa3b1f146"; // OpenWeather API
@@ -25,10 +28,12 @@ public class LocationSuggestionTask extends AsyncTask<String, Void, List<String>
         this.adapter = adapter;
     }
 
+    // Método para obtener sugerencias de ubicación
     @Override
     protected List<String> doInBackground(String... params) {
         List<String> suggestions = new ArrayList<>();
 
+        // try-catch que se encarga de manejar posibles errores en caso de que la API no responda
         try {
             String query = URLEncoder.encode(params[0], "UTF-8");
             String urlString = GEOCODING_API_URL +
@@ -74,10 +79,12 @@ public class LocationSuggestionTask extends AsyncTask<String, Void, List<String>
         return suggestions;
     }
 
+    // Método para actualizar la lista de sugerencias
     @Override
     protected void onPostExecute(List<String> suggestions) {
         adapter.clear();
         adapter.addAll(suggestions);
         adapter.notifyDataSetChanged();
     }
+
 }

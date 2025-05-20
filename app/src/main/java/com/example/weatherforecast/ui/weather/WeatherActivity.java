@@ -19,14 +19,17 @@ import com.example.weatherforecast.controller.WeatherController;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
-import com.example.weatherforecast.model.WeatherCache;
-import com.example.weatherforecast.ui.NavigationManager;
-import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.data.WeatherCache;
+import com.example.weatherforecast.util.NavigationManager;
+import com.example.weatherforecast.ui.settings.SettingsActivity;
 import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
+/**
+ * Actividad principal que muestra la información del clima
+ */
 public class WeatherActivity extends AppCompatActivity implements WeatherController.WeatherView {
     private WeatherController controller;
     private NavigationManager navigationManager;
@@ -36,17 +39,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     private DailyForecastComponent dailyForecastComponent;
     private WeatherCache weatherCache;
 
-    // UI Components
     private ImageView backgroundGif;
     private ImageView toolbarLogo;
     private ImageButton btnChangeLocation;
     private ImageButton btnSettings;
     private BottomNavigationView bottomNavigation;
 
-    private String currentCity = "Palma de Mallorca"; // Default city
+    private String currentCity = "Palma de Mallorca"; // Ciudad default
     private boolean forceReload = false;
     private ProgressBar progressBar;
-    private static final int CACHE_MAX_AGE_MINUTES = 30; // Cache válido por 30 minutos
+    private static final int CACHE_MAX_AGE_MINUTES = 30; // Cache válido por 30 minutos para evitar sobrecargas
 
     private String username;
 
@@ -97,7 +99,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent); // Importante: actualiza el intent
+        setIntent(intent);
 
         // Actualizar la ciudad si ha cambiado
         if (intent.hasExtra("CITY_NAME")) {
@@ -116,10 +118,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     }
 
     private void initComponents() {
-        // Initialize UI components
         findViews();
 
-        // Initialize managers and components
         navigationManager = new NavigationManager(
                 this,
                 bottomNavigation,
@@ -150,7 +150,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
                 this
         );
 
-        // Initialize controller
+        // Controlador
         controller = new WeatherController(this);
         controller.setView(this);
     }
@@ -203,7 +203,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
     }
 
     private void loadWeatherData() {
-        // Mostrar indicador de carga si es necesario
         showLoading(true);
 
         // Cargar datos del clima con una pequeña demora para permitir que la UI se actualice
@@ -212,6 +211,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
         }, 100);
     }
 
+    // Método para cargar datos desde la caché
     private void loadFromCache() {
         CurrentWeather currentWeather = weatherCache.getCurrentWeather();
         List<HourlyForecast> hourlyForecasts = weatherCache.getHourlyForecast();
@@ -235,6 +235,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
         }
     }
 
+    // Métodos de WeatherView
     @Override
     public void displayCurrentWeather(CurrentWeather weather) {
         runOnUiThread(() -> {
@@ -311,4 +312,5 @@ public class WeatherActivity extends AppCompatActivity implements WeatherControl
             controller.onDestroy();
         }
     }
+
 }

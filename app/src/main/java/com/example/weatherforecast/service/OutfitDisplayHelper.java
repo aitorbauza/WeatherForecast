@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.weatherforecast.R;
-import com.example.weatherforecast.model.OutfitImageMapper;
+import com.example.weatherforecast.util.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
 
 import java.util.List;

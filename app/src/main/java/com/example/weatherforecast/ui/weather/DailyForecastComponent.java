@@ -12,8 +12,7 @@ import com.example.weatherforecast.model.DailyForecast;
 import java.util.List;
 
 /**
- * Component responsible for displaying daily forecast information.
- * Follows Single Responsibility Principle by handling only daily forecast display logic.
+ * Componente para mostrar la información diaria del clima
  */
 public class DailyForecastComponent {
     private final LinearLayout container;
@@ -24,10 +23,7 @@ public class DailyForecastComponent {
         this.context = context;
     }
 
-    /**
-     * Updates the UI with daily forecast information
-     * @param forecasts The list of daily forecasts
-     */
+    // Método para mostrar las predicciones diarias
     public void displayForecasts(List<DailyForecast> forecasts) {
         container.removeAllViews();
 
@@ -48,4 +44,5 @@ public class DailyForecastComponent {
             container.addView(itemView);
         }
     }
+
 }

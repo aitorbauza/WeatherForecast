@@ -33,13 +33,13 @@ import com.example.weatherforecast.data.DBHelper;
 import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.DailyForecast;
 import com.example.weatherforecast.model.HourlyForecast;
-import com.example.weatherforecast.model.OutfitImageMapper;
+import com.example.weatherforecast.util.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
 import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
-import com.example.weatherforecast.ui.LocationSuggestionTask;
-import com.example.weatherforecast.ui.NavigationManager;
-import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.ui.weather.LocationSuggestionTask;
+import com.example.weatherforecast.util.NavigationManager;
+import com.example.weatherforecast.ui.settings.SettingsActivity;
 import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -60,8 +60,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     private TextView weatherEmoji;
     private TextView temperatureText;
     private TextView weatherConditionText;
-    private TextView maxTempText;
-    private TextView minTempText;
     private TextView weatherSummaryText;
     private TextView humidityText;
     private RadioGroup radioGroupStyle;
@@ -111,14 +109,14 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         }
 
         setContentView(R.layout.activity_outfit);
-        // Recuperar los datos de la ciudad enviados desde la actividad anterior
+        // Recupera los datos de la ciudad enviados desde la actividad anterior
         if (getIntent().hasExtra("CITY_NAME")) {
             currentCity = getIntent().getStringExtra("CITY_NAME");
         } else {
             currentCity = DEFAULT_CITY; // Ciudad por defecto si no se especifica
         }
 
-        // Verificar si debemos forzar la recarga
+        // Verifica si debemos forzar la recarga
         forceReload = NavigationManager.shouldForceReload(getIntent());
 
         initViews();
@@ -132,7 +130,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        // Actualizar ciudad si ha cambiado
+        // Actualiza ciudad si ha cambiado
         if (intent.hasExtra("CITY_NAME")) {
             String newCity = intent.getStringExtra("CITY_NAME");
             if (!currentCity.equals(newCity)) {
@@ -141,7 +139,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             }
         }
 
-        // Verificar si debemos forzar la recarga
+        // Verifica si debemos forzar la recarga
         if (NavigationManager.shouldForceReload(intent)) {
             loadWeatherData();
         }
@@ -163,7 +161,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         cardOutfit = findViewById(R.id.cardOutfit);
         progressBar = findViewById(R.id.progressBar);
 
-        // Botón para cambiar ubicación
         btnChangeLocation = findViewById(R.id.btnChangeLocation);
         btnChangeLocation.setOnClickListener(v -> showLocationDialog());
 
@@ -339,6 +336,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
     private void loadWeatherData() {
         showLoading(true);
 
+        // Handler que se ejecuta después de 200ms
         new Handler().postDelayed(() -> {
             if (weatherController == null) {
                 weatherController = new WeatherController(this);
@@ -351,7 +349,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
 
     // Método para mostrar la recomendación de ropa
     private void showOutfitRecommendation(OutfitRecommendation recommendation) {
-        // Asegurarse que el outfit card esté visible
         cardOutfit.setVisibility(View.VISIBLE);
 
         // Si la recomendación es null, mostrar un mensaje y ocultar botones relacionados
@@ -378,6 +375,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         // Calcular la puntuación de confort
         outfitViewModel.calculateComfortRating(currentOutfit);
 
+        // Crear el layout para el diálogo
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_outfit_rating, null);
         builder.setView(dialogView);
@@ -394,6 +392,7 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             progressComfort.setProgress(comfortRating);
         }
 
+        // Mensaje de calificación
         String ratingMessage = outfitViewModel.getRatingMessage().getValue();
         if (ratingMessage != null) {
             tvRatingMessage.setText(ratingMessage);
@@ -403,7 +402,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
         outfitDisplayHelper.displayOutfitWithImages(outfitRatingImagesContainer, currentOutfit);
 
         AlertDialog dialog = builder.create();
-
         btnCloseRating.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
@@ -529,7 +527,6 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             forceReload = false;
             loadWeatherData();
         }
-        // Eliminar la carga automática del outfit guardado
     }
 
     @Override
@@ -539,4 +536,5 @@ public class OutfitActivity extends AppCompatActivity implements WeatherControll
             weatherController.onDestroy();
         }
     }
+
 }

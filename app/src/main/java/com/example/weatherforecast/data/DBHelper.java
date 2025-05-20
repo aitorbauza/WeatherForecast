@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Clase encargada de gestionar la base de datos SQLite para la aplicación.
+ * Clase encargada de gestionar la base de datos SQLite.
  * Gestiona usuarios, preferencias y outfits guardados.
  */
 public class DBHelper extends SQLiteOpenHelper {
@@ -54,7 +54,6 @@ public class DBHelper extends SQLiteOpenHelper {
     // Formato de fecha usado en la app
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
 
-    // Constructor
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -102,14 +101,9 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    /**
-     * Registra un nuevo usuario en la base de datos.
-     * @param username Nombre de usuario
-     * @param password Contraseña
-     * @return true si el registro fue exitoso, false si el usuario ya existe
-     */
+    // Método que registra un nuevo usuario
     public boolean registerUser(String username, String password) {
-        // Verificar si el usuario ya existe
+        // Verifica si el usuario ya existe
         if (checkUserExists(username)) {
             return false;
         }
@@ -120,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_PASSWORD, password);
 
-        // Insertar nuevo usuario
+        // Inserta nuevo usuario
         long result = db.insert(TABLE_USERS, null, values);
 
         // Crear preferencias por defecto para el usuario
@@ -131,14 +125,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    /**
-     * Verifica si un usuario ya existe en la base de datos.
-     * @param username Nombre de usuario a verificar
-     * @return true si el usuario existe, false en caso contrario
-     */
+    // Método que verifica si un usuario ya existe
     private boolean checkUserExists(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        //Query
         String query = "SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = ?";
         Cursor cursor = db.rawQuery(query, new String[] {username});
 
@@ -148,12 +139,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return exists;
     }
 
-    /**
-     * Verifica las credenciales de un usuario.
-     * @param username Nombre de usuario
-     * @param password Contraseña
-     * @return true si las credenciales son correctas, false en caso contrario
-     */
+    // Método que verifica si el usuario y contraseña son válidos
     public boolean checkUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -163,16 +149,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
         Cursor cursor = db.rawQuery(query, new String[] {username, password});
 
+        // Verifica si el usuario existe
         boolean valid = cursor.getCount() > 0;
         cursor.close();
 
         return valid;
     }
 
-    /**
-     * Registra la fecha de último inicio de sesión del usuario.
-     * @param username Nombre de usuario
-     */
+    // Método que registra el último inicio de sesión de un usuario
     public void recordLogin(String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -187,14 +171,12 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] {username});
     }
 
-    /**
-     * Crea preferencias predeterminadas para un nuevo usuario.
-     * @param username Nombre de usuario
-     */
+    // Método que crea las preferencias por defecto para un usuario
     private void createDefaultPreferences(String username) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+        // Y las inserta en la tabla de preferencias
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_SURNAME, "");
         values.put(COLUMN_GENDER, UserPreferences.Gender.OTHER.name());
@@ -204,12 +186,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PREFERENCES, null, values);
     }
 
-    /**
-     * Guarda las preferencias de un usuario.
-     * @param username Nombre de usuario
-     * @param preferences Objeto con las preferencias del usuario
-     * @return true si la operación fue exitosa
-     */
+    // Método que guarda las preferencias de un usuario
     public boolean saveUserPreferences(String username, UserPreferences preferences) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -233,11 +210,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    /**
-     * Obtiene las preferencias de un usuario.
-     * @param username Nombre de usuario
-     * @return Objeto UserPreferences con las preferencias del usuario
-     */
+    // Método que obtiene las preferencias de un usuario y devuelve un objeto con ellas
     public UserPreferences getUserPreferences(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -272,18 +245,12 @@ public class DBHelper extends SQLiteOpenHelper {
         return preferences;
     }
 
-    /**
-     * Guarda un outfit junto con la información meteorológica para una fecha específica.
-     * @param username Nombre de usuario
-     * @param outfit Recomendación de outfit
-     * @param weather Información del clima
-     * @param date Fecha del outfit
-     * @return true si se guardó correctamente
-     */
+    // Método que guarda un outfit en la base de datos
     public boolean saveOutfit(String username, OutfitRecommendation outfit, CurrentWeather weather, Date date) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
+        // Convertir outfit y clima a JSON
         Gson gson = new Gson();
         String outfitJson = gson.toJson(outfit);
         String weatherJson = gson.toJson(weather);
@@ -317,12 +284,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
-    /**
-     * Obtiene un outfit guardado para una fecha específica.
-     * @param username Nombre de usuario
-     * @param date Fecha del outfit
-     * @return SavedOutfitEntry con la información del outfit y el clima, o null si no existe
-     */
+    // Método que obtiene un outfit guardado para una fecha
     public SavedOutfitEntry getOutfitByDate(String username, Date date) {
         SQLiteDatabase db = this.getReadableDatabase();
         String dateStr = DATE_FORMAT.format(date);
@@ -350,70 +312,14 @@ public class DBHelper extends SQLiteOpenHelper {
         return entry;
     }
 
-    /**
-     * Obtiene todos los outfits guardados para un usuario.
-     * @param username Nombre de usuario
-     * @return Lista de SavedOutfitEntry con la información de outfits y clima
-     */
-    public List<SavedOutfitEntry> getAllOutfits(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        List<SavedOutfitEntry> outfits = new ArrayList<>();
-
-        String query = "SELECT * FROM " + TABLE_SAVED_OUTFITS +
-                " WHERE " + COLUMN_USERNAME + " = ?" +
-                " ORDER BY " + COLUMN_DATE + " DESC";
-
-        Cursor cursor = db.rawQuery(query, new String[] {username});
-
-        if (cursor.moveToFirst()) {
-            Gson gson = new Gson();
-
-            do {
-                String outfitJson = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_OUTFIT_JSON));
-                String weatherJson = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WEATHER_JSON));
-                String dateStr = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE));
-
-                OutfitRecommendation outfit = gson.fromJson(outfitJson, OutfitRecommendation.class);
-                CurrentWeather weather = gson.fromJson(weatherJson, CurrentWeather.class);
-
-                try {
-                    Date date = DATE_FORMAT.parse(dateStr);
-                    SavedOutfitEntry entry = new SavedOutfitEntry(outfit, weather, date);
-                    outfits.add(entry);
-                } catch (ParseException e) {
-                    Log.e(TAG, "Error parsing date: " + dateStr, e);
-                }
-
-            } while (cursor.moveToNext());
-        }
-
-        cursor.close();
-        return outfits;
-    }
-
-    /**
-     * Elimina un outfit guardado para una fecha específica.
-     * @param username Nombre de usuario
-     * @param date Fecha del outfit
-     * @return true si se eliminó correctamente
-     */
-    public boolean deleteOutfit(String username, Date date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String dateStr = DATE_FORMAT.format(date);
-
-        int result = db.delete(TABLE_SAVED_OUTFITS,
-                COLUMN_USERNAME + " = ? AND " + COLUMN_DATE + " = ?",
-                new String[] {username, dateStr});
-
-        return result > 0;
-    }
-
+    // Método que obtiene el último outfit guardado
     public SavedOutfitEntry getLatestOutfit(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
         SavedOutfitEntry latestOutfit = null;
 
+        //try-catch que encapsula la consulta a la base de datos y si hay un error lo maneja
         try {
-            // Consulta SQL para obtener el último outfit guardado ordenado por fecha
+            // Query para obtener el último outfit guardado ordenado por fecha
             String query = "SELECT * FROM outfits WHERE username = ? ORDER BY save_date DESC LIMIT 1";
             Cursor cursor = db.rawQuery(query, new String[]{username});
 
@@ -423,13 +329,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 String weatherJson = cursor.getString(cursor.getColumnIndex("weather_data"));
                 long dateMillis = cursor.getLong(cursor.getColumnIndex("save_date"));
 
-                // Convertir JSON a objetos
                 Gson gson = new Gson();
                 OutfitRecommendation outfit = gson.fromJson(outfitJson, OutfitRecommendation.class);
                 CurrentWeather weather = gson.fromJson(weatherJson, CurrentWeather.class);
                 Date saveDate = new Date(dateMillis);
 
-                // Crear entrada de outfit guardado
                 latestOutfit = new SavedOutfitEntry(outfit, weather, saveDate);
             }
             cursor.close();

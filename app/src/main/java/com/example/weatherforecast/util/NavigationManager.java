@@ -1,4 +1,4 @@
-package com.example.weatherforecast.ui;
+package com.example.weatherforecast.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -195,4 +195,5 @@ public class NavigationManager {
             this.currentCity = newCity;
         }
     }
+
 }

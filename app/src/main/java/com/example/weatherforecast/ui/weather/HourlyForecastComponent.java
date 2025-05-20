@@ -12,8 +12,7 @@ import com.example.weatherforecast.model.HourlyForecast;
 import java.util.List;
 
 /**
- * Component responsible for displaying hourly forecast information.
- * Follows Single Responsibility Principle by handling only hourly forecast display logic.
+ * Componente para mostrar la información horaria del clima
  */
 public class HourlyForecastComponent {
     private final LinearLayout container;
@@ -24,10 +23,7 @@ public class HourlyForecastComponent {
         this.context = context;
     }
 
-    /**
-     * Updates the UI with hourly forecast information
-     * @param forecasts The list of hourly forecasts
-     */
+    // Método para mostrar las predicciones horarias
     public void displayForecasts(List<HourlyForecast> forecasts) {
         container.removeAllViews();
 
@@ -46,4 +42,5 @@ public class HourlyForecastComponent {
             container.addView(itemView);
         }
     }
+
 }

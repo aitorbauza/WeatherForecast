@@ -22,8 +22,8 @@ import com.example.weatherforecast.model.CurrentWeather;
 import com.example.weatherforecast.model.OutfitRecommendation;
 import com.example.weatherforecast.model.SavedOutfitEntry;
 import com.example.weatherforecast.service.OutfitDisplayHelper;
-import com.example.weatherforecast.ui.NavigationManager;
-import com.example.weatherforecast.ui.SettingsActivity;
+import com.example.weatherforecast.util.NavigationManager;
+import com.example.weatherforecast.ui.settings.SettingsActivity;
 import com.example.weatherforecast.ui.forms.LoginActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -139,13 +139,13 @@ public class OutfitComparisonActivity extends AppCompatActivity {
                 .into(toolbarLogo);
     }
 
-    // Inicializa el ViewModel
     private void setupViewModel() {
         OutfitComparisonViewModelFactory factory = new OutfitComparisonViewModelFactory(this);
         viewModel = new ViewModelProvider(this, factory).get(OutfitComparisonViewModel.class);
 
         viewModel.setUsername(username);
 
+        // Observadores encargados de actualizar la interfaz
         viewModel.getFirstOutfitEntry().observe(this, outfitEntry -> {
             if (outfitEntry != null) {
                 displayFirstOutfit(outfitEntry);
@@ -389,7 +389,7 @@ public class OutfitComparisonActivity extends AppCompatActivity {
         }
     }
 
-    // Método auxiliar para obtener el nombre del estilo en español
+    // Método auxiliar para obtener el nombre del estilo en español, ya que en la base de datos está en inglés
     private String getStyleInSpanish(OutfitRecommendation.Style style) {
         switch (style) {
             case CASUAL: return "Casual";

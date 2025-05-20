@@ -3,6 +3,9 @@ package com.example.weatherforecast.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase que mapea códigos de iconos de clima a emojis correspondientes.
+ */
 public class WeatherIconMapper {
     private final Map<String, String> iconToEmojiMap;
 

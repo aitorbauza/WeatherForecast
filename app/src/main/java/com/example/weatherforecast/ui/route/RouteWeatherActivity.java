@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.weatherforecast.R;
 import com.example.weatherforecast.model.RoutePoint;
-import com.example.weatherforecast.ui.NavigationManager;
+import com.example.weatherforecast.util.NavigationManager;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -21,6 +21,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase que sirve para calcular la ruta entre dos puntos y mostrar el clima en cada punto
+ * Extiende AppCompatActivity para manejar el ciclo de vida de la actividad e
+ * implementa de OnMapReadyCallback para manejar el mapa
+ */
 public class RouteWeatherActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private TextInputEditText editOrigin;
@@ -45,7 +50,7 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         // Inicialización básica de vistas
         initViews();
 
-        // Posponer operaciones pesadas
+        // Posponer operaciones pesadas (optimización)
         new Handler().post(() -> {
             setUpUI();
             setupMapFragment();
@@ -58,7 +63,6 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
 
             setupObservers();
 
-            // Pre-fill origin city if available
             if (getIntent().hasExtra("ORIGIN_CITY")) {
                 currentCity = getIntent().getStringExtra("ORIGIN_CITY");
                 editOrigin.setText(currentCity);
@@ -99,6 +103,7 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         navigationManager.setupBottomNavigation();
     }
 
+    // Método que inicializa el mapa
     private void setupMapFragment() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -107,9 +112,10 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    // Método que configura los observadores
     private void setupObservers() {
-        // Observe weather points changes
         weatherRouteManager.getWeatherPointsLiveData().observe(this, routePoints -> {
+
             // Ya estamos en el hilo principal gracias a LiveData
             mapManager.updateWeatherMarkers(routePoints);
             updateWeatherSummaryText(routePoints);
@@ -133,6 +139,7 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    // Método que busca la ruta
     private void searchRoute() {
         String origin = editOrigin.getText().toString().trim();
         String destination = editDestination.getText().toString().trim();
@@ -142,14 +149,11 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
             return;
         }
 
-        // Update UI to show loading
         weatherSummaryText.setText("Calculando la ruta y el clima...");
         isCalculatingRoute = true;
 
-        // Disable search button while calculating
         btnSearchRoute.setEnabled(false);
 
-        // Request route calculation
         routeManager.calculateRoute(origin, destination, new RouteManager.RouteCalculationCallback() {
             @Override
             public void onRouteCalculated(List<com.google.android.gms.maps.model.LatLng> routePoints, double distanceInKm) {
@@ -159,7 +163,6 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
 
                 updateNavigationManager(origin);
 
-                // Calculate weather for route points
                 weatherRouteManager.processRouteWeather(routePoints, distanceInKm, origin, destination);
             }
 
@@ -175,8 +178,8 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
         });
     }
 
+    // Método que actualiza el texto de resumen del clima
     private void updateWeatherSummaryText(List<RoutePoint> points) {
-        // Filter out points without weather data
         List<RoutePoint> pointsWithWeather = new ArrayList<>();
         for (RoutePoint point : points) {
             if (point.getLocationName() != null && !point.getLocationName().isEmpty()) {
@@ -184,7 +187,7 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
             }
         }
 
-        // Update the summary text
+        // Si no hay puntos con clima, no hacemos nada
         if (!pointsWithWeather.isEmpty()) {
             StringBuilder weatherSummary = new StringBuilder();
             for (int i = 0; i < pointsWithWeather.size(); i++) {
@@ -220,8 +223,6 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        // Llama a los métodos de apagado directamente, sin crear un nuevo executor
         if (routeManager != null) {
             routeManager.shutdown();
         }
@@ -230,4 +231,5 @@ public class RouteWeatherActivity extends AppCompatActivity implements OnMapRead
             weatherRouteManager.shutdown();
         }
     }
+
 }

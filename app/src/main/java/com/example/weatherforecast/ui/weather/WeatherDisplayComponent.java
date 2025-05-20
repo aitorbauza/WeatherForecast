@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Component responsible for displaying current weather information.
- * Follows Single Responsibility Principle by handling only weather display logic.
+ * Componente encargado de mostrar la información del clima en la UI
  */
 public class WeatherDisplayComponent {
     private final TextView locationText;
@@ -35,12 +34,8 @@ public class WeatherDisplayComponent {
         this.humidityText = humidityText;
     }
 
-    /**
-     * Updates the UI with current weather information
-     * @param weather The current weather data
-     */
+
     public void displayWeather(CurrentWeather weather) {
-        // Format for "Today, HH:mm"
         SimpleDateFormat dateFormat = new SimpleDateFormat("'Hoy', HH:mm", new Locale("es", "ES"));
         String currentDateTime = dateFormat.format(new Date());
 
@@ -51,4 +46,5 @@ public class WeatherDisplayComponent {
         humidityText.setText(String.format("Humedad: %d%%", weather.getHumidity()));
         weatherSummaryText.setText(currentDateTime + " - " + weather.getSummary());
     }
+
 }

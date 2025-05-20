@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -13,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weatherforecast.R;
-import com.example.weatherforecast.model.OutfitImageMapper;
+import com.example.weatherforecast.util.OutfitImageMapper;
 import com.example.weatherforecast.model.OutfitRecommendation;
 
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
     private final Map<OutfitCategory, String> currentSelections;
 
     // Enumerar las posibles categorías de outfit
+    // Enum sirve para evitar errores de tipeo, ya que los nombres de las categorías no cambian
     public enum OutfitCategory {
         TOP, BOTTOM, FOOTWEAR, OUTERWEAR, ACCESSORIES
     }
@@ -49,11 +49,11 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         this.currentSelections = new HashMap<>();
         this.outfitImageMapper = new OutfitImageMapper();
 
-        // Inicializar alternativas y selecciones
         initializeAlternatives();
         initializeSelections();
     }
 
+    // ViewHolder para los elementos del RecyclerView encargados de mostrar las alternativas de ropa
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,11 +62,11 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         return new ViewHolder(view);
     }
 
+    // ViewHolder que muestra las alternativas de ropa
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         OutfitCategory category = OutfitCategory.values()[position];
 
-        // Configurar el título de la categoría
         holder.tvCategory.setText(getCategoryTitle(category));
 
         // Configurar el adaptador del spinner con las alternativas
@@ -125,7 +125,6 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         List<String> accessories = new ArrayList<>();
         String accessoriesItem = currentSelections.get(OutfitCategory.ACCESSORIES);
         if (accessoriesItem != null && !accessoriesItem.equals("-")) {
-            // Dividir accesorios, ya que pueden ser múltiples separados por comas
             accessories.addAll(Arrays.asList(accessoriesItem.split(", ")));
         }
 
@@ -249,20 +248,4 @@ public class OutfitCustomizeAdapter extends RecyclerView.Adapter<OutfitCustomize
         }
     }
 
-    private void setupItemClickListeners(ImageView itemImage, String item) {
-        itemImage.setOnClickListener(v -> {
-            // Togglear selección (por ejemplo, cambiar opacidad o borde)
-            boolean isSelected = itemImage.getAlpha() == 1.0f;
-
-            if (isSelected) {
-                // Deseleccionar
-                itemImage.setAlpha(0.5f);
-                // Lógica para quitar del outfit
-            } else {
-                // Seleccionar
-                itemImage.setAlpha(1.0f);
-                // Lógica para añadir al outfit
-            }
-        });
-    }
 }
