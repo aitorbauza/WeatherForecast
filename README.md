@@ -19,7 +19,7 @@ App para ver el clima y qué ropa usar, recomendándote qué ponerte según el c
 
 - **Controller:** Recibe pedidos y da respuestas  
 - **Data:** Guarda y saca datos  
-- **DTO:** Objetos para pasar info entre partes  
+- **DTO:** Objetos para pasar información entre partes  
 - **Model:** Define las cosas principales (clima, ropa, rutas, usuario)  
 - **Repository:** Maneja los datos (guardar, sacar)  
 - **Service:** Lógica para procesar clima y ropa  
