@@ -29,4 +29,12 @@
     <string name="outfit_recommendation_title">Recomendación de outfit</string>
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="origin">Origen</string>
+    <string name="destination">Destino</string>
+    <string name="search_route">Buscar ruta</string>
+    <string name="loading_route">Cargando ruta...</string>
+    <string name="error_route_not_found">No se pudo encontrar la ruta</string>
+    <string name="error_weather_data">Error al obtener datos del clima</string>
+    <string name="error_invalid_input">Por favor ingresa origen y destino válidos</string>
 </resources>

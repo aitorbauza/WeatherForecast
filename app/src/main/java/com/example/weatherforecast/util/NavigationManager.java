@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 
 import androidx.core.app.ActivityOptionsCompat;
 
@@ -41,7 +42,7 @@ public class NavigationManager {
     }
 
     public void setupBottomNavigation() {
-        // Establece el ítem seleccionado según la actividad actual
+        // Primero aplicar solo la selección, que es rápido
         switch (currentActivity) {
             case WEATHER:
                 bottomNavigation.setSelectedItemId(R.id.nav_weather);
@@ -57,7 +58,12 @@ public class NavigationManager {
                 break;
         }
 
-        // Listener para gestionar la navegación
+        // Usar una implementación más ligera del listener
+        setupLightweightNavigationListener();
+    }
+
+    private void setupLightweightNavigationListener() {
+        // Usar un listener más liviano que solo capture el ítem y lo procese de forma asíncrona
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
@@ -69,21 +75,21 @@ public class NavigationManager {
                 return true;
             }
 
-            // Navegar a la actividad seleccionada
-            if (itemId == R.id.nav_weather) {
-                navigateToWeatherScreen();
-                return true;
-            } else if (itemId == R.id.nav_clothing) {
-                navigateToOutfitScreen();
-                return true;
-            } else if (itemId == R.id.nav_route) {
-                navigateToRouteWeatherScreen();
-                return true;
-            } else if (itemId == R.id.nav_outfit_comparison) {
-                navigateToOutfitComparisonScreen();
-                return true;
-            }
-            return false;
+            // Usar un handler para procesar la navegación ligeramente después
+            // evitando bloquear la interfaz durante la transición
+            new Handler().post(() -> {
+                if (itemId == R.id.nav_weather) {
+                    navigateToWeatherScreen();
+                } else if (itemId == R.id.nav_clothing) {
+                    navigateToOutfitScreen();
+                } else if (itemId == R.id.nav_route) {
+                    navigateToRouteWeatherScreen();
+                } else if (itemId == R.id.nav_outfit_comparison) {
+                    navigateToOutfitComparisonScreen();
+                }
+            });
+
+            return true;
         });
     }
 
