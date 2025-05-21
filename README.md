@@ -9,7 +9,9 @@ App para ver el clima y qué ropa usar, recomendándote qué ponerte según el c
 - Muestra el clima actual, por hora y días  
 - Te dice qué ropa usar según el clima  
 - Permite planear rutas viendo el clima en el camino  
-- Tiene algunas opciones para cambiar cosas
+- Puedes comparar outfits
+- Puedes configurar la ropa y tus preferencias (tolerancias o estilos...)
+- Ofrece más de 90 prendas a elegir.
 
 ---
 
