@@ -3,29 +3,20 @@
     <item
         android:id="@+id/nav_weather"
         android:icon="@drawable/ic_cloud"
-        android:title=" "/>
+        android:title="Tiempo"/>
 
     <item
         android:id="@+id/nav_clothing"
         android:icon="@drawable/ic_clothe_foreground"
-        android:title=" "/>
-
-    <!-- Espacio reservado para futuros iconos -->
-    <item
-        android:id="@+id/nav_placeholder1"
-        android:enabled="false"
-        android:visible="false"
-        android:title="" />
+        android:title="Outfit"/>
 
     <item
-        android:id="@+id/nav_placeholder2"
-        android:enabled="false"
-        android:visible="false"
-        android:title="" />
+        android:id="@+id/nav_route"
+        android:icon="@drawable/ic_route"
+        android:title="Ruta" />
 
     <item
-        android:id="@+id/nav_placeholder3"
-        android:enabled="false"
-        android:visible="false"
-        android:title="" />
+        android:id="@+id/nav_outfit_comparison"
+        android:icon="@drawable/ic_outfit_comparison"
+        android:title="Comparar Outfit"/>
 </menu>

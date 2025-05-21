@@ -1,5 +1,8 @@
 package com.example.weatherforecast.model;
 
+/**
+ * Modelo de pronóstico horario
+ */
 public class HourlyForecast {
     private String hour;
     private double temperature;
@@ -11,8 +14,22 @@ public class HourlyForecast {
         this.weatherIcon = weatherIcon;
     }
 
-    // Getters
+    public HourlyForecast() {
+    }
+
+    // Getters y Setters
     public String getHour() { return hour; }
     public double getTemperature() { return temperature; }
     public String getWeatherIcon() { return weatherIcon; }
+
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
+    }
+
 }

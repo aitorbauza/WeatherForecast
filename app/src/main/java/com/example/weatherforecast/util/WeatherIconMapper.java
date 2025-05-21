@@ -3,6 +3,9 @@ package com.example.weatherforecast.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase que mapea códigos de iconos de clima a emojis correspondientes.
+ */
 public class WeatherIconMapper {
     private final Map<String, String> iconToEmojiMap;
 
@@ -38,13 +41,55 @@ public class WeatherIconMapper {
         // Niebla
         iconToEmojiMap.put("50d", "🌫️");
         iconToEmojiMap.put("50n", "🌫️");
+
+        // Añadir más mappings genéricos para asegurar que todos los códigos tengan un emoji
+        iconToEmojiMap.put("clear", "☀️");
+        iconToEmojiMap.put("clouds", "☁️");
+        iconToEmojiMap.put("rain", "🌧️");
+        iconToEmojiMap.put("drizzle", "🌦️");
+        iconToEmojiMap.put("thunderstorm", "⛈️");
+        iconToEmojiMap.put("snow", "❄️");
+        iconToEmojiMap.put("mist", "🌫️");
+        iconToEmojiMap.put("fog", "🌫️");
+        iconToEmojiMap.put("haze", "🌫️");
+        iconToEmojiMap.put("dust", "🌫️");
+        iconToEmojiMap.put("sand", "🌫️");
+        iconToEmojiMap.put("ash", "🌫️");
+        iconToEmojiMap.put("squall", "💨");
+        iconToEmojiMap.put("tornado", "🌪️");
     }
 
     public String getEmojiFromIconCode(String iconCode) {
         if (iconCode == null || iconCode.isEmpty()) {
-            return "❓"; // Emoji por defecto si no hay código
+            return "🌤️"; // Emoji por defecto si no hay código
         }
 
-        return iconToEmojiMap.getOrDefault(iconCode, "❓");
+        // Intenta obtener el emoji basado en el código exacto
+        String emoji = iconToEmojiMap.get(iconCode);
+
+        // Si no se encuentra el código exacto, intenta con versiones simplificadas
+        if (emoji == null) {
+            // Intenta buscar por la descripción del clima (parte del código sin el sufijo d/n)
+            if (iconCode.length() > 2) {
+                String baseCode = iconCode.substring(0, 2);
+                emoji = iconToEmojiMap.get(baseCode);
+            }
+
+            // Si todavía es null, intenta buscar por palabras clave
+            if (emoji == null) {
+                iconCode = iconCode.toLowerCase();
+
+                if (iconCode.contains("clear")) emoji = iconToEmojiMap.get("clear");
+                else if (iconCode.contains("cloud")) emoji = iconToEmojiMap.get("clouds");
+                else if (iconCode.contains("rain")) emoji = iconToEmojiMap.get("rain");
+                else if (iconCode.contains("drizzle")) emoji = iconToEmojiMap.get("drizzle");
+                else if (iconCode.contains("thunder")) emoji = iconToEmojiMap.get("thunderstorm");
+                else if (iconCode.contains("snow")) emoji = iconToEmojiMap.get("snow");
+                else if (iconCode.contains("mist") || iconCode.contains("fog")) emoji = iconToEmojiMap.get("mist");
+            }
+        }
+
+        // Si aún así no encontramos un emoji, devolvemos uno por defecto
+        return emoji != null ? emoji : "🌤️";
     }
 }

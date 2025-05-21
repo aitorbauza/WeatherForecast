@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Contenedor para accesorios superiores (gafas, gorros) -->
+    <LinearLayout
+        android:id="@+id/accessoriesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Contenedor para abrigos y chaquetas -->
+    <LinearLayout
+        android:id="@+id/outerwearContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Contenedor para parte superior (camisetas, blusas) -->
+    <LinearLayout
+        android:id="@+id/topsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Contenedor para parte inferior (pantalones, faldas) -->
+    <LinearLayout
+        android:id="@+id/bottomsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Contenedor para calzado -->
+    <LinearLayout
+        android:id="@+id/shoesContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center" />
+
+</LinearLayout>

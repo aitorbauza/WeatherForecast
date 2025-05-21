@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3E6167"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Logo arriba -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/logo"
+            android:layout_gravity="center_horizontal"/>
+
+        <!-- Contenedor para centrar verticalmente la tarjeta -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Tarjeta del formulario con diseño mejorado -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/bordeedittext"
+                android:elevation="8dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:backgroundTint="#99FFFFFF">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="¡REGÍSTRATE!"
+                    android:textColor="#3E6167"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <!-- Subtítulo explicativo -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="¡Y vístete con Wearther!"
+                    android:textColor="#546E7A"
+                    android:textSize="15sp"
+                    android:textAlignment="center"
+                    android:layout_marginBottom="20dp"/>
+
+                <!-- Icono de usuario -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="15dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_user"
+                        android:layout_marginEnd="10dp"
+                        app:tint="#3E6167"/>
+
+                    <EditText
+                        android:id="@+id/editTextRegUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bordeedittext"
+                        android:hint="Nombre"
+                        android:inputType="textPersonName"
+                        android:padding="14dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#78909C" />
+                </LinearLayout>
+
+                <!-- Icono de contraseña -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="15dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lock"
+                        android:layout_marginEnd="10dp"
+                        app:tint="#3E6167"/>
+
+                    <EditText
+                        android:id="@+id/editTextRegPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bordeedittext"
+                        android:hint="Contraseña"
+                        android:inputType="textPassword"
+                        android:padding="14dp"
+                        android:textColor="#212121"
+                        android:textColorHint="#78909C" />
+                </LinearLayout>
+
+                <!-- Icono de confirmar contraseña -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="24dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_lockopen"
+                        android:layout_marginEnd="10dp"
+                        app:tint="#3E6167"/>
+
+                    <EditText
+                        android:id="@+id/editTextConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Repetir contraseña"
+                        android:inputType="textPassword"
+                        android:padding="14dp"
+                        android:background="@drawable/bordeedittext"
+                        android:textColor="#212121"
+                        android:textColorHint="#78909C"/>
+                </LinearLayout>
+
+                <!-- Checkbox para términos y condiciones -->
+                <CheckBox
+                    android:id="@+id/checkBoxTerms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Acepto los términos y condiciones"
+                    android:textColor="#546E7A"
+                    android:buttonTint="#3E6167"
+                    android:layout_marginBottom="24dp"/>
+
+                <Button
+                    android:id="@+id/buttonRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="#3E6167"
+                    android:padding="16dp"
+                    android:text="¡REGÍSTRATE!"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Texto de registro centrado con estilo mejorado -->
+        <TextView
+            android:id="@+id/textViewLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="¿Ya tienes una cuenta? Inicia Sesión aqui"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textAlignment="center" />
+    </LinearLayout>
+</LinearLayout>

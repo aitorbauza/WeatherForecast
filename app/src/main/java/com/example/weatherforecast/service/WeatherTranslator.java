@@ -3,6 +3,9 @@ package com.example.weatherforecast.service;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Clase encargada de traducir las condiciones climáticas de inglés a español
+ */
 public class WeatherTranslator {
     private final Map<String, String> translations;
 
@@ -11,7 +14,6 @@ public class WeatherTranslator {
         initializeTranslations();
     }
 
-    // Método para traducir las condiciones climáticas de inglés a español
     public String translateWeatherCondition(String enCondition) {
         if (enCondition == null) {
             return "";
