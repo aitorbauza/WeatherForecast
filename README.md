@@ -39,7 +39,7 @@ App para ver el clima y qué ropa usar, recomendándote qué ponerte según el c
 - Clima actual, por hora y diario  
 - Recomendaciones de ropa  
 - Planificación de rutas con clima  
-- Guarda datos para no usar tanto internet  
+- Guarda datos en una base de datos
 - Puedes cambiar algunas preferencias
 
 ---
