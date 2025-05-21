@@ -1,6 +1,6 @@
 # Weather - Aitor Bauzá Gómez
 
-App para ver el clima y qué ropa usar.
+App para ver el clima y qué ropa usar, recomendándote qué ponerte según el clima en un tiempo y espacio determinados.
 
 ---
 
@@ -43,3 +43,5 @@ App para ver el clima y qué ropa usar.
 - Puedes cambiar algunas preferencias
 
 ---
+
+Para más información sobre weather, consulte la documentación de este repositorio.
